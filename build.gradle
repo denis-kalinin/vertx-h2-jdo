@@ -40,18 +40,22 @@ dependencies {
     
     jdo 'org.datanucleus:datanucleus-enhancer:5.0.0-m4'
 
-    // Declare the dependency for your favourite test framework you want to use in your tests.
-    // TestNG is also supported by the Gradle Test task. Just change the
-    // testCompile dependency to testCompile 'org.testng:testng:6.8.1' and add
-    // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
     testCompile 'io.vertx:vertx-unit:3.2.1'
+    testCompile ('guru.nidi.raml:raml-tester:0.8.8'){
+    	exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
+    	exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
+    }
+    testCompile 'org.jboss.resteasy:resteasy-client:3.0.6.Final'
 }
 
 def mainVerticle = "com.x.services.MainVerticle"
 mainClassName = "io.vertx.core.Launcher"
 run {
     args = ["run", mainVerticle]
+}
+test{
+	testLogging.showStandardStreams = true
 }
 task datanucleusEnhance {
     description "Enhance JPA model classes using DataNucleus Enhancer"

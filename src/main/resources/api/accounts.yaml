@@ -1,0 +1,121 @@
+#%RAML 0.8
+---
+title: Accounts REST API
+baseUri: http://localhost:3423/bank
+version: v1
+mediaType:  application/json
+documentation:
+  - title: Getting started
+    content: !include getstarted.md
+  - title: Using API
+    content: |
+      How to use it
+      and when
+
+/accounts:
+  displayName: accounts
+  description: Collection of accounts
+  get:
+    description: Get list of all accounts
+    responses:
+      200:
+        description: Successfully return a list of accounts
+        body:
+          application/json:
+            example: |
+              [ {
+                "customerId" : "001",
+                "id" : "1",
+                "deposit" : 2.43
+              }, {
+                "customerId" : "002",
+                "id" : "2",
+                "deposit" : 234.34
+              } ]
+            schema: |
+              { "$schema": "http://json-schema.org/schema",
+                "type": "array",
+                "description": "List of all accounts",
+                "properties": {
+                  "greeting":  { "type": "string" }
+                },
+                "required": [ "greeting" ]
+              }
+      404:
+        description: There are no accounts.
+        body:
+          application/json:
+            schema: |
+              { "$schema": "http://json-schema.org/schema",
+                "type": "array",
+                "description": "List of all accounts",
+                "properties": {
+                  "greeting":  { "type": "string" }
+                },
+                "required": [ "greeting" ]
+              }
+
+  post:
+    description: Create an account
+    responses:
+      201:
+        description: Account was created
+        body:
+          application/json:
+            example: |
+              {
+                "customerId": "002",
+                "id": "2",
+                "deposit": 234.34
+              }
+      409:
+        description: Failed to create account
+        body:
+          application/json:
+            example: |
+              {
+                "defaultMessage": "Some reason why account is not created",
+                "code": "x.i18n.account.create.failed"
+              }
+  /{accountId}:
+    description: Operations with specific account
+    uriParameters:
+      accountId:
+        description: Account number
+    get:
+      description: Get account `accountId = {accountId}`
+      responses:
+        200:
+          description: Account entity
+          body:
+            application/json:
+              example: |
+                {
+                  "customerId": "002",
+                  "id": "2",
+                  "deposit": 234.34
+                }
+        404:
+          description: Account is not found.
+          body:
+            application/json:
+              example: |
+                {
+                  "defaultMessage": "Account 34 is not found.",
+                  "code": "x.i18n.account.not.found"
+                }
+    delete:
+      description: Delete account
+      responses:
+        204:
+          description: Account was deleted
+        404:
+          description: Account with the specified ID was not found - nothing to delete.
+          body:
+            application/json:
+              example: |
+                {
+                  "defaultMessage": "Account 34 is not found.",
+                  "code": "x.i18n.account.not.found"
+                }
+

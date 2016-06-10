@@ -1,5 +1,7 @@
 package com.x.services;
 
+import java.io.IOException;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -20,7 +22,7 @@ import rx.Subscriber;
 @RunWith(VertxUnitRunner.class)
 public class RxTests {
 	
-	private static org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(ApiTests.class);
+	private static org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(RxTests.class);
 	private static Vertx vertx;
 	
 	@BeforeClass
@@ -51,17 +53,16 @@ public class RxTests {
 				},
 				error -> {
 					try{
+						LOG.error("Error onError", error);
 						context.fail(error);
-					}catch (Throwable e){
-						LOG.error("Error onError", e);
-					}
+					}catch (Throwable e){}
 				},
 				() -> {
 					async.complete();
 				}
 			);
 	}
-	@Test(expected=RuntimeException.class)
+	@Test(expected=IOException.class)
 	public void getWrongUrl(TestContext context){
 		final Async async = context.async();
 		String urls[] = new String[]{"http://asdfas.ruas"};
@@ -76,6 +77,7 @@ public class RxTests {
 			},
 			error -> {
 				try{
+					LOG.info("EXPECTED ERROR", error.getMessage());
 					context.fail(error);
 				}catch (Throwable e){}
 			},
@@ -104,7 +106,8 @@ public class RxTests {
 				subscriber.onCompleted();
 			});
 			req.exceptionHandler(error -> {
-				subscriber.onError(new RuntimeException("Request failed for "+url, error));
+				//subscriber.onError(new RuntimeException("Request failed for "+url, error));
+				subscriber.onError(new IOException(error));
 			});
 			req.end();
 		});

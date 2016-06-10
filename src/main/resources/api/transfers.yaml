@@ -1,0 +1,36 @@
+#%RAML 0.8
+---
+title: Accounts REST API
+baseUri: http://localhost:3423/bank
+version: v1
+
+/transactions:
+  get:
+    description: List all transactions
+    responses:
+      200:
+        description: Transactions list
+        body:
+          application/json:
+            schema: song
+
+schemas:
+ - song: |
+    {
+      "type": "object",
+      "$schema": "http://json-schema.org/draft-03/schema",
+      "id": "http://jsonschema.net",
+      "required": true,
+      "properties": {
+        "songTitle": {
+          "type": "string",
+          "required": true
+        },
+        "albumId": {
+          "type": "string",
+          "required": true,
+          "minLength": 36,
+          "maxLength": 36
+        }
+      }
+    }

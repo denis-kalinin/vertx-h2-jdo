@@ -1,6 +1,7 @@
 package com.x.models;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface AccountDAO{
 
@@ -8,7 +9,7 @@ public interface AccountDAO{
 
 	Collection<Account> getAccounts();
 
-	Account getById(String id);
+	Optional<Account> getById(String id);
 
 	Collection<Account> getAccounts(String customerId);
 	

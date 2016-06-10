@@ -3,6 +3,7 @@ package com.x.models;
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+import javax.jdo.annotations.Column;
 import javax.jdo.annotations.DatastoreIdentity;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -22,6 +23,7 @@ public class Account implements Serializable {
 	@Persistent(valueStrategy=IdGeneratorStrategy.IDENTITY)
 	private String id;
 	private String customerId;
+	@Column(jdbcType="DECIMAL", length=20, scale=2)
 	private BigDecimal deposit = BigDecimal.ZERO;
 	
 	public Account(String customerId){
