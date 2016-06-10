@@ -32,7 +32,7 @@ public class TransactionsTests {
 	private static org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TransactionsTests.class);
 	private static Vertx vertx;
 	
-	private static final RamlDefinition api = RamlLoaders.fromClasspath().load("/api/accounts.yaml");//.assumingBaseUri("http://localhost:3423/bank");
+	private static final RamlDefinition api = RamlLoaders.fromClasspath().load("/raml/accounts.yaml");//.assumingBaseUri("http://localhost:3423/bank");
 	private ResteasyClient client = new ResteasyClientBuilder().build();
 	private CheckingWebTarget checking;
 	private RamlHttpClient browser;
@@ -51,16 +51,16 @@ public class TransactionsTests {
 	
 	@Before
 	public void createTarget() {
-		//checking = api.createWebTarget(client.target("http://localhost:8029"));
+		checking = api.createWebTarget(client.target("http://localhost:8029"));
 		browser = api.createHttpClient();
 		//final Async async = context.async();
 		//async.complete();
 	}
 	
-	@Test
+	//@Test
 	public void emptyTest(){}
 	
-	//@Test
+	@Test
 	public void fetchUrls(TestContext context) throws IOException{
 		final Async async = context.async();
 		/*
@@ -76,7 +76,7 @@ public class TransactionsTests {
 		HttpResponse response = browser.execute(get);
 		LOG.debug("response code: {}", response.getStatusLine().getStatusCode());
 		LOG.debug("REPORT: {}", browser.getLastReport());
-		Assert.assertThat(browser.getLastReport(), RamlMatchers.checks());
+		Assert.assertThat(browser.getLastReport(), RamlMatchers.hasNoViolations());
 		async.complete();
 	}
 }

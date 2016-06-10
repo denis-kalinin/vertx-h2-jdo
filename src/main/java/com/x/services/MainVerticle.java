@@ -29,8 +29,7 @@ public class MainVerticle extends AbstractVerticle {
 		Injector injector = Guice.createInjector(new AccountModule());//.injectMembers(this);
 		LOG.debug("Main Verticle started");
 		Router router = Router.router(vertx);
-		//router.get("/").handler( rc -> { rc.response().putHeader("content-type", "text/html").end("Hello World!");});
-		
+
 		Router bankRouter = Router.router(vertx);
 		bankRouter.get("/accounts").handler(this :: getAccounts);
 		bankRouter.get("/accounts/:id").handler(this :: getAccountById);
@@ -46,19 +45,12 @@ public class MainVerticle extends AbstractVerticle {
 		
 		router.mountSubRouter("/bank", bankRouter);
 		
-		Router secondRouter = Router.router(vertx);
-		secondRouter.get().handler(rc -> {
-			rc.response().putHeader("content-type", "text/html").end("Hello Mars!");
-		});
-		
-		router.mountSubRouter("/mars", secondRouter);
-		
-		router.route("/api/*").handler(StaticHandler.create("api").setCachingEnabled(false));
+		router.route("/raml/*").handler(StaticHandler.create("raml").setCachingEnabled(false));
 				
 		router.route("/api-console/*").handler(StaticHandler.create().setCachingEnabled(false));
 		
 		router.get("/").handler(rc -> {
-			rc.response().setStatusCode(302).putHeader("Location", "/api-console/?raml=/api/accounts.yaml").end();
+			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
 		
 		startFuture.complete();
