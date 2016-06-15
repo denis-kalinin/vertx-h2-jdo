@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManager;
@@ -25,8 +26,9 @@ public class AccountDAOImpl implements AccountDAO {
 	
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(AccountDAO.class);
 	
+	@Inject
 	private PersistenceManagerFactory pmf;
-	
+	/*
 	public AccountDAOImpl() throws URISyntaxException, MalformedURLException, ClassNotFoundException{
 		URL jarUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
 		Path jarPath = Paths.get(jarUrl.toURI());
@@ -52,6 +54,7 @@ public class AccountDAOImpl implements AccountDAO {
 		props.put("datanucleus.schema.validateConstraints", false);
 		pmf = JDOHelper.getPersistenceManagerFactory(props);
 	}
+	*/
 	@Override
 	public void addAccounts(Account ... accounts){
 		PersistenceManager pm = pmf.getPersistenceManager();
@@ -77,7 +80,7 @@ public class AccountDAOImpl implements AccountDAO {
 		return pm.detachCopyAll(result);
 	}
 	@Override
-	public Optional<Account> getById(String id){
+	public Optional<Account> getAccountById(String id){
 		PersistenceManager pm = pmf.getPersistenceManager();
 		try{
 			Account account = pm.getObjectById(Account.class, id);

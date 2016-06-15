@@ -43,7 +43,7 @@ public class AccountsTests {
 		final Async async = context.async();
 		
 		HttpClient client = vertx.createHttpClient();
-		client.getNow(8080, "localhost", "/bank/accounts", response -> {
+		client.getNow(8029,"localhost", "/bank/accounts", response -> {
 			response.handler(body -> {
 				ObjectMapper mapper = new ObjectMapper();
 				Map<String, Account> map;
@@ -52,7 +52,7 @@ public class AccountsTests {
 					context.assertTrue(map.containsKey("001"), "The expected ID 001 is not found");
 					context.assertTrue(map.get("001").getId().equals("001"), "Key and Account ID mismatch");
 				} catch (Exception e) {
-					context.fail(e);
+					context.fail(new RuntimeException(e));
 				} finally {
 					async.complete();
 				}
@@ -66,7 +66,7 @@ public class AccountsTests {
 		final Async async = context.async();
 		
 		HttpClient client = vertx.createHttpClient();
-		client.getNow(8080, "localhost", "/bank/accounts/004", response -> {
+		client.getNow(8029, "localhost", "/bank/accounts/004", response -> {
 			response.handler(body -> {
 				ObjectMapper mapper = new ObjectMapper();
 				Map<String, Account> map;

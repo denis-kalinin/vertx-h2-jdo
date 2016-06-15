@@ -34,15 +34,17 @@ public class TransactionsTests {
 	
 	private static final RamlDefinition api = RamlLoaders.fromClasspath().load("/raml/accounts.yaml");//.assumingBaseUri("http://localhost:3423/bank");
 	private ResteasyClient client = new ResteasyClientBuilder().build();
-	private CheckingWebTarget checking;
-	private RamlHttpClient browser;
+	private static CheckingWebTarget checking;
+	private static RamlHttpClient browser;
 	
 	@BeforeClass
 	public static void before(TestContext context){
 		LOG.debug("VALIDATE API: {}", api.validate());
-		//Assert.assertThat(api.validate(), RamlMatchers.validates());
+		Assert.assertThat(api.validate(), RamlMatchers.validates());
 		vertx = Vertx.vertx();
 		vertx.deployVerticle(MainVerticle.class.getName(), context.asyncAssertSuccess());
+		//checking = api.createWebTarget(client.target("http://localhost:8029"));
+		browser = api.createHttpClient();
 	}
 	@AfterClass
 	public static void tearDown(TestContext context) {
@@ -51,8 +53,7 @@ public class TransactionsTests {
 	
 	@Before
 	public void createTarget() {
-		checking = api.createWebTarget(client.target("http://localhost:8029"));
-		browser = api.createHttpClient();
+		
 		//final Async async = context.async();
 		//async.complete();
 	}
