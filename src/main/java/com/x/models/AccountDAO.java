@@ -9,7 +9,7 @@ public interface AccountDAO{
 
 	Collection<Account> getAccounts();
 
-	Optional<Account> getById(String id);
+	Optional<Account> getAccountById(String id);
 
 	Collection<Account> getAccounts(String customerId);
 	

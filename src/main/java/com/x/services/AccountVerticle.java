@@ -31,6 +31,7 @@ import javax.jdo.Transaction;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import com.x.di.AccountModule;
 import com.x.models.Account;
 import com.x.models.AccountDAO;
@@ -52,8 +53,10 @@ public class AccountVerticle extends AbstractVerticle {
 	private AccountDAO dao;
 	
 	@Override
-	public void start(Future<Void> startFuture){	
-		registerMessageHandlers();		
+	public void start(Future<Void> startFuture){
+		Injector injector = Guice.createInjector(new AccountModule());
+		injector.injectMembers(this);
+		registerMessageHandlers();
 	}
 	
 	@Override
@@ -72,7 +75,7 @@ public class AccountVerticle extends AbstractVerticle {
 				//return specific account
 				case "get":{
 					String accountId = (String) message.body();
-					Optional<Account> opAccount = dao.getById(accountId);
+					Optional<Account> opAccount = dao.getAccountById(accountId);
 					if(opAccount.isPresent()){
 						Account acc = opAccount.get();
 						String accString = Json.encodePrettily(acc);
@@ -93,6 +96,24 @@ public class AccountVerticle extends AbstractVerticle {
 				}
 			}
 			
+		});
+		
+		vertx.eventBus().consumer("transfers", message -> {
+			String method = message.headers().get("method");
+			switch (method){
+				case "send": {
+					String accountId = (String) message.body();
+					
+					break;
+				}
+				case "getForAccount": {
+					
+				}
+				
+				default: {
+					message.fail(404, "Wrong eventbus request");
+				}
+			}
 		});
 		/*return account by id
 		vertx.eventBus().consumer("account", message -> {

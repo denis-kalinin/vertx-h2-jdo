@@ -21,12 +21,11 @@ import io.vertx.ext.web.handler.StaticHandler;
 public class MainVerticle extends AbstractVerticle {
 	
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(MainVerticle.class);
-	private DeploymentOptions workerDeploymentOptions = new DeploymentOptions()
-			.setWorker(true);
+	private DeploymentOptions workerDeploymentOptions = new DeploymentOptions().setWorker(true);
 	
 	@Override
 	public void start(Future<Void> startFuture){
-		Injector injector = Guice.createInjector(new AccountModule());//.injectMembers(this);
+		//Injector injector = Guice.createInjector(new AccountModule());//.injectMembers(this);
 		LOG.debug("Main Verticle started");
 		Router router = Router.router(vertx);
 
@@ -38,17 +37,19 @@ public class MainVerticle extends AbstractVerticle {
 		int port = config().getInteger("http.port", 8029);
 		
 		vertx.deployVerticle(com.x.services.SubVerticle.class.getName());
-		vertx.deployVerticle(injector.getInstance(com.x.services.AccountVerticle.class), workerDeploymentOptions);
+		//vertx.deployVerticle(injector.getInstance(com.x.services.AccountVerticle.class), workerDeploymentOptions);
+		vertx.deployVerticle(com.x.services.AccountVerticle.class.getName(), workerDeploymentOptions);
 		vertx.createHttpServer()
 			.requestHandler(router::accept)
 			.listen(port);
-		
+		//mount bank API
 		router.mountSubRouter("/bank", bankRouter);
-		
+		//make raml files accessible
 		router.route("/raml/*").handler(StaticHandler.create("raml").setCachingEnabled(false));
-				
-		router.route("/api-console/*").handler(StaticHandler.create().setCachingEnabled(false));
-		
+		//register raml console
+		router.route("/raml-console/*").handler(
+				StaticHandler.create("webroot").setCachingEnabled(true).setEnableFSTuning(true));
+		//redirect root to raml console
 		router.get("/").handler(rc -> {
 			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
