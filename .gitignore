@@ -3,6 +3,8 @@
 /build/
 /.gradle/
 /file-uploads/
+/.gitignore
+/.project
 /.settings/
-.classpath
-.project
+/.classpath
+/.README.md.html
