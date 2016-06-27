@@ -1,5 +1,14 @@
 language: java
 jdk:
-  - oraclejdk8
+- oraclejdk8
 before_install:
-  - chmod +x gradlew
+- chmod +x gradlew
+deploy:
+  provider: s3
+  access_key_id: AKIAJU5WTEP6GM2DOSSQ
+  secret_access_key:
+    secure: HDgG2AYjYR2R5tLGUtzzzUx7ueEvVxkbO9Ru+97DpVxOXE9qz6PH7MVIRyt2uSbQn6tWX9RsMh5P9T2Oru3MdmjHDqsuOGWOrwQh2i1eUAzyYU0xbNFIGKBIsvQ1za0Cq/akElAwYggykC3kOEKuLCrNZ/Qdl7rAksq0DbM80CcOw5ojQ5bt/Yik1yEfVTaFr+FZd6D4QHVz5h8S3uKPw3aQZh0T2lEkYVLIPj0v+WTj91fjbiW+QDOoW8d23UEMuPus3ZqS7mmdpNZSQPdRqawfNBzyJz0XDVF78itkd3ylWm8/sPuT/gkN0Xrd58SEHe67/qhaXFy24sk51fuWcRAkZga5zK02GDxvTH8+9Hh6VJlPxX3+E6vULGXc0CXJjnbCRdfyHRB7buvzq8Ivun3YEp0jqI/Gjz0L1lcgGQZb50AwjqUbMxDUYzmSVSkbna9YNYttBHGr+qWwa5yRwG2LE4ccTcj4y0tNUaKJ/MTyg3v+ZV3v1DURYScPL/BbJEUzMe7k2Dfx7smQSQj+bfqm61RpRsjDGMwPEKsSOKeOe/9PSbWaQY7cAVOmOMZGK+vCz3AglcKtpfb1r2HowZ9joVmwGCVMLEkRiQA1QxHQ+udqBTXRPzqPL8qX5Jf1SDw6FP9lrEOFFi5xK+iox7cRnAJNtqNS+Ahb9HYt+Xo=
+  bucket: vertx-h2-jdo
+  acl: ''
+  on:
+    repo: denis-kalinin/vertx-h2-jdo
