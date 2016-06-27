@@ -4,10 +4,14 @@ import java.io.IOException;
 
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import com.github.jknack.handlebars.Handlebars;
+import com.github.jknack.handlebars.Template;
 
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
@@ -113,6 +117,13 @@ public class RxTests {
 		});
 	}
 	
+	
+	@Test
+	public void testHandlebars() throws IOException{
+		Handlebars handlebars = new Handlebars();
+		Template template = handlebars.compileInline("Hello {{this}}!");
+		Assert.assertEquals("Hello Handlebars.java!", template.apply("Handlebars.java"));
+	}
 	
 	
 }

@@ -1,7 +1,10 @@
-package com.x.models;
+package com.x.dao;
 
 import java.util.Collection;
 import java.util.Optional;
+
+import com.x.models.Account;
+import com.x.models.Balance;
 
 public interface AccountDAO{
 
@@ -12,5 +15,7 @@ public interface AccountDAO{
 	Optional<Account> getAccountById(String id);
 
 	Collection<Account> getAccounts(String customerId);
+	
+	Balance getBalance();
 	
 }

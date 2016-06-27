@@ -1,10 +1,6 @@
 #%RAML 0.8
----
-title: Accounts REST API
-baseUri: http://localhost:3423/bank
-version: v1
-
-/transactions:
+  displayName: transfers
+  description: Money transfers API
   get:
     description: List all transactions
     responses:
@@ -14,23 +10,54 @@ version: v1
           application/json:
             schema: song
 
-schemas:
- - song: |
-    {
-      "type": "object",
-      "$schema": "http://json-schema.org/draft-03/schema",
-      "id": "http://jsonschema.net",
-      "required": true,
-      "properties": {
-        "songTitle": {
-          "type": "string",
-          "required": true
-        },
-        "albumId": {
-          "type": "string",
-          "required": true,
-          "minLength": 36,
-          "maxLength": 36
-        }
-      }
-    }
+  post:
+    description: Send transfer
+    body:
+      application/json:
+        example: |
+          {
+            "from": 12
+            "to": 1
+            "amount": 45.42
+          }
+    responses:
+      201:
+        description: Transfer commited
+        body:
+          application/json:
+            example: |
+              {
+                "from": "8ac682055577a9a0015577a9a00d0001",
+                "to": "8ac682055577a9a0015577a9a00d0006",
+                "amount": 45.42,
+                "date": 1466591453373,
+                "status": "Success"
+              }
+  /{transferId}:
+    description: Operation with particular transfer
+    uriParameters:
+      transferId:
+        description: Transfer ID
+    get:
+      description: Get transfer `transferId = {transferId}`
+      responses:
+        200:
+          description: Transfer entity
+          body:
+            application/json:
+              example: |
+                {
+                  "id": "3423421",
+                  "from": null,
+                  "to": null,
+                  "amount": 10.24
+                }
+        404:
+          description: Transfer is not found
+          body:
+            application/json:
+              example: |
+                {
+                  "defaultMessage": "Transfer 34 is not found.",
+                  "code": "x.i18n.transfer.not.found"
+                }

@@ -4,7 +4,9 @@ My customer asked to develop a simple microservice with embedded datastore and R
 - Jackson
 - JDO
 - RxJava
+- RAML
 - H2 database
 - Junit
 - slf4j + logback
 - Gradle
+- Handlebars.java

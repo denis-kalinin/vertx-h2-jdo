@@ -2,3 +2,7 @@
 /.vertx/
 /build/
 /.gradle/
+/file-uploads/
+/.settings/
+.classpath
+.project

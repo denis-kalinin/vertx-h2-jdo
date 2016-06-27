@@ -37,6 +37,9 @@ dependencies {
     compile 'org.datanucleus:datanucleus-accessplatform-jdo-rdbms:5.0.0-m4'
     compile 'com.h2database:h2:1.4.192'
     compile 'com.google.inject:guice:4.0'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'com.github.jknack:handlebars:4.0.5'
+    
     
     jdo 'org.datanucleus:datanucleus-enhancer:5.0.0-m4'
 
@@ -46,7 +49,9 @@ dependencies {
     	exclude group: 'com.fasterxml.jackson.core', module: 'jackson-core'
     	exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'
     }
-    testCompile 'org.jboss.resteasy:resteasy-client:3.0.6.Final'
+    testCompile 'org.jboss.resteasy:resteasy-client:3.0.17.Final'
+    //testCompile 'org.jboss.resteasy:resteasy-jackson-provider:3.0.17.Final'
+    testCompile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.17.Final'
 }
 
 def mainVerticle = "com.x.services.MainVerticle"
@@ -58,7 +63,7 @@ test{
 	testLogging.showStandardStreams = true
 }
 task datanucleusEnhance {
-    description "Enhance JPA model classes using DataNucleus Enhancer"
+    description "Enhance JDO model classes using DataNucleus Enhancer"
     dependsOn compileJava
 
     doLast {    

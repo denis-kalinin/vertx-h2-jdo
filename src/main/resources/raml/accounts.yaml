@@ -1,7 +1,7 @@
 #%RAML 0.8
 ---
 title: Accounts REST API
-baseUri: http://localhost:3423/bank
+baseUri: http://{{this}}/bank
 version: v1
 mediaType:  application/json
 documentation:
@@ -56,10 +56,21 @@ documentation:
               }
 
   post:
-    description: Create an account
+    description: Create account
+    body:
+      application/json:
+        example: |
+          {
+            "customerId": "Duke",
+          }
     responses:
       201:
         description: Account was created
+        headers:
+          Location:
+            description: URI pointing to the location of the newly created account
+            example: http://api.example.com/api/1/accounts/abc123
+            required: true
         body:
           application/json:
             example: |
@@ -119,3 +130,4 @@ documentation:
                   "code": "x.i18n.account.not.found"
                 }
 
+/transfers: !include transfers.yaml

@@ -19,25 +19,25 @@ import io.vertx.rxjava.core.http.HttpClient;
 import com.x.models.Account;
 
 
-@RunWith(VertxUnitRunner.class)
+//@RunWith(VertxUnitRunner.class)
 public class AccountsTests {
 	
 	private static org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(AccountsTests.class);
 	private Vertx vertx;
 
-	@Before
+	//@Before
 	public void bootApp(TestContext context) {
 		//Launcher.executeCommand("run", MainVerticle.class.getName());
 		vertx = Vertx.vertx();
 		vertx.deployVerticle(MainVerticle.class.getName(), context.asyncAssertSuccess());
 		LOG.debug("Test Vert.x booted");
 	}
-	@After
+	//@After
 	public void tearDown(TestContext context) {
 		vertx.close(context.asyncAssertSuccess());
 	}
 
-	@Test
+	//@Test
 	public void testHelloEndpoint(TestContext context) {
 		LOG.debug("Getting bank accounts");
 		final Async async = context.async();
@@ -60,7 +60,7 @@ public class AccountsTests {
 		});
 	}
 	
-	@Test
+	//@Test
 	public void notExistedAccount(TestContext context) {
 		LOG.debug("Getting bank accounts");
 		final Async async = context.async();

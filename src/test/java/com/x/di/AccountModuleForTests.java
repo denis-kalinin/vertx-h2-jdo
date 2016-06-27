@@ -14,32 +14,12 @@ import java.util.UUID;
 import javax.jdo.JDOHelper;
 import javax.jdo.PersistenceManagerFactory;
 
-
-import com.google.inject.AbstractModule;
-import com.x.models.AccountDAO;
-import com.x.models.AccountDAOImpl;
-import com.x.models.TransferDAO;
-import com.x.models.TransferDAOImpl;
-
-public class AccountModuleForTests extends AbstractModule {
+public class AccountModuleForTests extends AccountModule {
 	
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(AccountModule.class);
 
 	@Override
-	protected void configure() {
-		bind(AccountDAO.class).to(AccountDAOImpl.class);
-		bind(TransferDAO.class).to(TransferDAOImpl.class);
-		try {
-			PersistenceManagerFactory pmf = getPmf();
-			bind(PersistenceManagerFactory.class).toInstance(pmf);
-		} catch (MalformedURLException | ClassNotFoundException | URISyntaxException e) {
-			addError(e);
-		}
-		
-	}
-	
-	
-	private PersistenceManagerFactory getPmf() throws MalformedURLException, ClassNotFoundException, URISyntaxException{
+	protected PersistenceManagerFactory getPmf() throws MalformedURLException, ClassNotFoundException, URISyntaxException{
 		URL jarUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
 		Path jarPath = Paths.get(jarUrl.toURI());
 		LOG.info("Path is {} URL is {}", jarPath, jarUrl.getPath());
