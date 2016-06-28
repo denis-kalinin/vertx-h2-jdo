@@ -17,6 +17,7 @@ deploy:
     secure: e+WKmmS4POgbkhb6pJGgA4cWLon3auJanVKsnNnFXNqE5DfiOXWP/94YccPuv7oGqj4JYqvHpdFQOH0EvHtiDXlp6yD5PjnYLpRKiea+IncwIhfL33KMNjuy1HCC+Rs3Vo2pKh+yrvS450Pknb7GtHzanKXvtgo+dh5Jmuq0NPcfwgq+3CSr/BHfizCi/HaEVohbTWX8jAMSaDE+QJYZLHMUkPoW4dJbGj/nSQWEX2RVtYeHrlYsMQV6mrsNwRkR6TUVJ64bQKfHTkeuz6Vix3J3uevDQhBG+p4Z0TPY2g/rJ5poq/dd31pwwQQTukIr6QSfHdtwUoe576UM683fYAL71B/Hff1aI01JspzjZVNcgtBcSl5NOLwoDhZD2qUPZUtKbFurBBWw5ySijxt/ahPTWxDoV1PcAQUKuhY94Eo6HmCrHGu/LwigHgVGltTnMjiIdQ3Oa7FCtUtcUJ7sgrHSecYU2Xpm0CcrF2io6WiCCOMtSw4tnPkWzs25JCB/WbAxng5Fe3SW7KpsqgfYIRCaM5Gr+UqOfdFC2Hehs45Zbep1qyAoOCIf9nI12ZRJpvVJkSPV6n/wyc/XKfuWEnjT8HGmM1XfbgfThd9DSiYhqyoTfvhiULOg5e4xdK5Gmm7zFm/J/hCIrmkxNKYjS9PHGzAeruYV1YjyvyMkasA=
   local_dir: dpl_cd_upload
   skip_cleanup: true
+  region: eu-west-1
   on: &2
     repo: denis-kalinin/vertx-h2-jdo
   bucket: vertx-h2-jdo
