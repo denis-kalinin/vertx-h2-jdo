@@ -10,6 +10,13 @@ cache:
   directories:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
+before_deploy:
+  - mkdir -p latest
+  - mv build/distributions/vertx-h2-jdo.zip latest/vertx-h2-jdo.zip
+  - mv appspec.yml latest/appspec.yml
+  - zip -r latest *
+  - mkdir -p dpl_cd_upload
+  - mv latest.zip dpl_cd_upload/latest.zip
 deploy:
 - provider: s3
   access_key_id: AKIAIWOFZYSVBE7D4VJQ
@@ -26,13 +33,10 @@ deploy:
   access_key_id: AKIAIWOFZYSVBE7D4VJQ
   secret_access_key: *1
   bucket: vertx-h2-jdo
-  key: latest/vertx-h2-jdo.zip
+  key: latest.zip
   bundle_type: zip
   application: vertx-h2-jdo
   deployment_group: vertxDeploymentGroup
-  region: us-east-1
+  region: eu-west-1
   on: *2
-before_deploy:
-- mkdir -p dpl_cd_upload
-- ls .
-- mv build/distributions/vertx-h2-jdo.zip dpl_cd_upload/vertx-h2-jdo.zip
+
