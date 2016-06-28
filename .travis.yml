@@ -30,6 +30,7 @@ deploy:
   bundle_type: zip
   application: vertx-h2-jdo
   deployment_group: vertxDeploymentGroup
+  region: us-east-1
   on: *2
 before_deploy:
 - mkdir -p dpl_cd_upload
