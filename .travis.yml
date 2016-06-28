@@ -32,4 +32,5 @@ deploy:
   on: *2
 before_deploy:
 - mkdir -p dpl_cd_upload
-- mv buld/distributions/vertx-h2-jdo.zip dpl_cd_upload/vertx-h2-jdo.zip
+- ls .
+- mv build/distributions/vertx-h2-jdo.zip dpl_cd_upload/vertx-h2-jdo.zip
