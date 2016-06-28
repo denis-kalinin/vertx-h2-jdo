@@ -18,7 +18,8 @@ plugins {
 repositories {
     // Use 'jcenter' for resolving your dependencies.
     // You can declare any Maven/Ivy/file repository here.
-    jcenter()
+    //jcenter()
+    mavenCentral()
 }
 configurations {
 	jdo {
@@ -94,6 +95,38 @@ task datanucleusEnhance {
     }
 }
 classes.dependsOn datanucleusEnhance
+
+task fatJar (type: Jar) {
+	manifest {
+		attributes 'Main-Class' : 'com.x.services.MainVerticle',
+			'Main-Verticle' : 'com.x.services.MainVerticle'
+	}
+	baseName = project.name + '-all'
+	from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+	with jar
+}
+
+task copyLibs(type: Copy) {
+    from configurations.compile
+    into relativePath(buildDir)+'/'+libsDirName+'/lib'
+}
+processResources.dependsOn copyLibs
+
+jar {
+	manifest {
+		attributes 'Main-Class' : 'com.x.services.MainVerticle',
+			'Class-Path' : configurations.compile.collect { 'lib/'+it.getName() }.join(' ')
+	}
+}
+
+distributions {
+    main {
+        contents {
+            from jar
+        }
+    }
+}
+//assemble.dependsOn fatJar
 
 /*
 project.ext {

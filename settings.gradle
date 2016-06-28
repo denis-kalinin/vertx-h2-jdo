@@ -16,4 +16,4 @@ include 'api'
 include 'services:webservice'
 */
 
-rootProject.name = 'vertx'
+rootProject.name = 'vertx-h2-jdo'

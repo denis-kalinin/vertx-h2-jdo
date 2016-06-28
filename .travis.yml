@@ -3,12 +3,21 @@ jdk:
 - oraclejdk8
 before_install:
 - chmod +x gradlew
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
 deploy:
   provider: s3
   access_key_id: AKIAIWOFZYSVBE7D4VJQ
   secret_access_key:
     secure: Ab03dyvwi/jOgHkxqEs41R+JBlWei1ojdjPLW9bsw1kWHDlKNL6S8u0x4NAhUYZVnFAhQwn++9Hjo7VaN9fHnhYTaxSZ2kiXiALwuxxML1XgP38C1vNiSwqpJHWN5Fxd/PZ9etbZybE+XbSMxK0MgJqwFPmGPCAQloEHSnXB7YdcY0vnGadhfdOJRn9PC5Oy5LC+Ve++78e8lKnrtXfk7vB2UqdI+W+3vXxO+LThe7lkNTTzeX/bf4/QoQgxJM09V3jd7RHaVmRA2FJOQhPK/4/E2eWZCqEH53xkn+ZhOEnG6Wc6EVWgnqMF9k8G8HC309KUxTuiOGzuactLob5ol/Zc4j5tZZVntGckHUvKteZEsBI3KsgKqjFLPpc22eENO4U3cp/bxkDDndmskAn0hGIW4pHyVZ/lABL4HcYE2IFqIpkexXsueyppHH63lf2gSSHt4LmvNG9pXw+vqYv0JX13VjFiE9AD0QP30segqe68AcU2d+SPw7CIdlWYxhvi3++56pLjcc1K6zw9ZeINgdJpfuMgTMi27uYm9NIpyEwfxgcr6oF4LnWlNGQDf9o7Crttt5cIYR0n1QhRrppI4p96Q4P+FCnV8Ra6FZXFwvsmo3N2Wx6WAJCiFeY+JnuYTuiip/oRfbAk5Vn2odOST+OtTYmgCwN294ISXPVYDPw=
   bucket: vertx-h2-jdo
-  acl: bucket_owner_full_control
+  acl: public_read
+  skip_cleanup: true
+  local_dir: build/distirbutions
   on:
     repo: denis-kalinin/vertx-h2-jdo
