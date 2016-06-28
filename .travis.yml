@@ -18,6 +18,6 @@ deploy:
   bucket: vertx-h2-jdo
   acl: public_read
   skip_cleanup: true
-  local_dir: build/distirbutions
+  local_dir: build/distributions
   on:
     repo: denis-kalinin/vertx-h2-jdo
