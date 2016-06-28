@@ -14,7 +14,7 @@ before_deploy:
   - mkdir -p latest
   - mv build/distributions/vertx-h2-jdo.zip latest/vertx-h2-jdo.zip
   - mv appspec.yml latest/appspec.yml
-  - zip -r latest *
+  - zip -r latest.zip latest
   - mkdir -p dpl_cd_upload
   - mv latest.zip dpl_cd_upload/latest.zip
 deploy:
@@ -28,7 +28,7 @@ deploy:
   on: &2
     repo: denis-kalinin/vertx-h2-jdo
   bucket: vertx-h2-jdo
-  upload_dir: latest
+  #upload_dir: dpl_cd_upload
 - provider: codedeploy
   access_key_id: AKIAIWOFZYSVBE7D4VJQ
   secret_access_key: *1
