@@ -25,6 +25,7 @@ deploy:
   local_dir: dpl_cd_upload
   skip_cleanup: true
   region: eu-west-1
+  acl: public_read
   on: &2
     repo: denis-kalinin/vertx-h2-jdo
   bucket: vertx-h2-jdo
