@@ -33,8 +33,8 @@ deploy:
   bucket: vertx-h2-jdo
   key: latest.zip
   bundle_type: zip
-  application: VertxDemo
-  deployment_group: VertxDemoDG
+  application: VertxH2_App
+  deployment_group: VertxH2_Group
   region: us-east-1
   on: *2
 
