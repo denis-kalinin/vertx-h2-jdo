@@ -2,4 +2,4 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /opt/vertx
+    destination: /var/www/html
