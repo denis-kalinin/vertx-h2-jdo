@@ -95,7 +95,7 @@ task datanucleusEnhance {
     }
 }
 classes.dependsOn datanucleusEnhance
-
+//fatjar is not working with JDO from Datanucleus...
 task fatJar (type: Jar) {
 	manifest {
 		attributes 'Main-Class' : 'com.x.services.MainVerticle',
@@ -110,7 +110,7 @@ task copyLibs(type: Copy) {
     from configurations.compile
     into relativePath(buildDir)+'/'+libsDirName+'/lib'
 }
-processResources.dependsOn copyLibs
+//processResources.dependsOn copyLibs
 
 jar {
 	manifest {
@@ -126,6 +126,16 @@ distributions {
         }
     }
 }
+task awsCodeDeploy(type: Copy){
+	into(relativePath(buildDir)+'/awsCodeDeploy')
+	from 'appspec.yml'
+	into(project.name){
+		into('lib'){ from configurations.compile}
+		into('bin'){ from startScripts }
+		from jar
+	}
+}
+assemble.dependsOn awsCodeDeploy
 //assemble.dependsOn fatJar
 
 /*

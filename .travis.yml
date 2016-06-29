@@ -11,18 +11,15 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 before_deploy:
-  - mkdir -p latest
-  - mv build/distributions/vertx-h2-jdo.zip latest/vertx-h2-jdo.zip
-  - mv appspec.yml latest/appspec.yml
-  - zip -r latest.zip latest
-  - mkdir -p dpl_cd_upload
-  - mv latest.zip dpl_cd_upload/latest.zip
+  - zip -r latest.zip build/awsCodeDeploy
+  - mkdir -p aws_upload
+  - mv latest.zip aws_upload/latest.zip
 deploy:
 - provider: s3
   access_key_id: AKIAIWOFZYSVBE7D4VJQ
   secret_access_key: &1
     secure: e+WKmmS4POgbkhb6pJGgA4cWLon3auJanVKsnNnFXNqE5DfiOXWP/94YccPuv7oGqj4JYqvHpdFQOH0EvHtiDXlp6yD5PjnYLpRKiea+IncwIhfL33KMNjuy1HCC+Rs3Vo2pKh+yrvS450Pknb7GtHzanKXvtgo+dh5Jmuq0NPcfwgq+3CSr/BHfizCi/HaEVohbTWX8jAMSaDE+QJYZLHMUkPoW4dJbGj/nSQWEX2RVtYeHrlYsMQV6mrsNwRkR6TUVJ64bQKfHTkeuz6Vix3J3uevDQhBG+p4Z0TPY2g/rJ5poq/dd31pwwQQTukIr6QSfHdtwUoe576UM683fYAL71B/Hff1aI01JspzjZVNcgtBcSl5NOLwoDhZD2qUPZUtKbFurBBWw5ySijxt/ahPTWxDoV1PcAQUKuhY94Eo6HmCrHGu/LwigHgVGltTnMjiIdQ3Oa7FCtUtcUJ7sgrHSecYU2Xpm0CcrF2io6WiCCOMtSw4tnPkWzs25JCB/WbAxng5Fe3SW7KpsqgfYIRCaM5Gr+UqOfdFC2Hehs45Zbep1qyAoOCIf9nI12ZRJpvVJkSPV6n/wyc/XKfuWEnjT8HGmM1XfbgfThd9DSiYhqyoTfvhiULOg5e4xdK5Gmm7zFm/J/hCIrmkxNKYjS9PHGzAeruYV1YjyvyMkasA=
-  local_dir: dpl_cd_upload
+  local_dir: aws_upload
   skip_cleanup: true
   region: eu-west-1
   acl: public_read
@@ -36,8 +33,8 @@ deploy:
   bucket: vertx-h2-jdo
   key: latest.zip
   bundle_type: zip
-  application: vertx-h2-jdo
-  deployment_group: vertxDeploymentGroup
-  region: eu-west-1
+  application: VertxDemo
+  deployment_group: VertxDemoDG
+  region: us-east-1
   on: *2
 
