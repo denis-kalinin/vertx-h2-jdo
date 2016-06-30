@@ -11,7 +11,7 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 before_deploy:
-  - zip -r latest.zip build/awsCodeDeploy
+  - zip -r -b build/awsCodeDeploy latest.zip
   - mkdir -p aws_upload
   - mv latest.zip aws_upload/latest.zip
 deploy:
