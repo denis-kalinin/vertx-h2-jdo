@@ -12,7 +12,7 @@ cache:
   - "$HOME/.gradle/wrapper/"
 before_deploy:
   - mkdir -p aws_upload
-  - cd build/aswCodeDeploy
+  - cd build/awsCodeDeploy
   - zip -r ../../aws_upload/latest.zip . *
   - cd ../..
 deploy:
