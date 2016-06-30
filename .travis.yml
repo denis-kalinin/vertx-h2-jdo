@@ -11,9 +11,10 @@ cache:
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 before_deploy:
-  - zip -r -b build/awsCodeDeploy latest.zip
   - mkdir -p aws_upload
-  - mv latest.zip aws_upload/latest.zip
+  - cd build/aswCodeDeploy
+  - zip -r ../../aws_upload/latest.zip . *
+  - cd ../..
 deploy:
 - provider: s3
   access_key_id: AKIAIWOFZYSVBE7D4VJQ
