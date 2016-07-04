@@ -127,6 +127,7 @@ public class MainVerticle extends AbstractVerticle {
 			LOG.trace("index page");
 			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
+		LOG.info("HttpServert binding to port {}", port);
 		HttpServer httpServer = vertx.createHttpServer()
 		.requestHandler(router::accept)
 		.listen(port);
