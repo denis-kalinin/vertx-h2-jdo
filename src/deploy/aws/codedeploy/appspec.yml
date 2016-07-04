@@ -11,5 +11,5 @@ permissions:
       - directory
 hooks:
   ApplicationStart:
-    - location: /opt/vertx/bin/vertx-h2-jdo
+    - location: deployScript/start
       timeout: 300
