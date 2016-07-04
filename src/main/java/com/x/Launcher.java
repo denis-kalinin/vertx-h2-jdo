@@ -14,6 +14,7 @@ public class Launcher {
 		//String className = Launcher.class.getName().replace('.', '/');
 		//String classJar = Launcher.class.getResource("/" + className + ".class").toString();
 		//if (classJar.startsWith("jar:")) {}
+		//System.setProperty("file.encoding", "UTF-8");
 		System.out.println("Vert.x application starting...");
 		if(args.length > 0){
 			io.vertx.core.Launcher.main(args);

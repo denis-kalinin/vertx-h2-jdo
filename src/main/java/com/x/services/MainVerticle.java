@@ -4,9 +4,11 @@ import io.vertx.core.Future;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.MessageCodec;
 import io.vertx.core.eventbus.ReplyException;
+import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.Json;
 
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -82,9 +84,22 @@ public class MainVerticle extends AbstractVerticle {
 		bankRouter.get("/balance").handler(this :: getBalance);
 		
 		int port = 80;
-		
-		if(!NetworkUtils.isPortAvailable(80, null)){
-			port = config().getInteger("http.port", 8029);
+		int httpPort = config().getInteger("http.port", 80);
+		LOG.trace("http.port from config: {}", httpPort);
+		if(httpPort == port){
+			if(!NetworkUtils.isPortAvailable(httpPort, null)){
+				try {
+					port = NetworkUtils.getEphimeralPort();
+					LOG.warn("Port {} is not available. Ephimeral port choosen to start HTTP server: {}", httpPort, port);
+				} catch (Exception e) {
+					RuntimeException newE = new RuntimeException("Failed to assign ephimeral port", e);
+					LOG.error(newE.getMessage());
+					startFuture.fail(newE);
+					throw newE;
+				}
+			}
+		} else {
+			port = httpPort;
 		}
 		
 		vertx.deployVerticle(com.x.services.SubVerticle.class.getName());
@@ -93,6 +108,7 @@ public class MainVerticle extends AbstractVerticle {
 			if(ar.succeeded()){
 				startFuture.complete();
 			}else{
+				LOG.error("Account API deployment failed", ar.cause());
 				startFuture.fail(ar.cause());
 			}
 		});
@@ -103,16 +119,19 @@ public class MainVerticle extends AbstractVerticle {
 		router.get("/raml/accounts.yaml").handler( this :: getYamlHandlebars);
 		router.route("/raml/*").handler(StaticHandler.create("META-INF/raml").setCachingEnabled(false));
 		//register raml console
-		router.route("/raml-console/*").handler(
-				StaticHandler.create("META-INF/webroot").setCachingEnabled(true).setEnableFSTuning(true));
+		StaticHandler staticHandler = StaticHandler.create("META-INF/webroot").setFilesReadOnly(true)
+			.setCachingEnabled(true).setEnableFSTuning(true);
+		router.route("/raml-console/*").handler(staticHandler);
 		//redirect root to raml console
 		router.get("/").handler(rc -> {
 			LOG.trace("index page");
 			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
-		vertx.createHttpServer()
+		HttpServer httpServer = vertx.createHttpServer()
 		.requestHandler(router::accept)
 		.listen(port);
+		
+		//LOG.info("Http server is listening on port {}", httpServer.);
 	}
 	/**
 	 * Substitute embedded Guice module with <code>customModule</code>.
