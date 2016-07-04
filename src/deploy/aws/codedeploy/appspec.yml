@@ -4,11 +4,12 @@ files:
   - source: vertx-h2-jdo
     destination: /opt/vertx
 permissions:
-  - object: /opt/vertx
+  - object: /opt
+    pattern: "vertx"
     mode: 777
     type:
       - directory
 hooks:
   ApplicationStart:
-    - location: /opt/vertx/vertx-h2-jdo/bin/vertx-h2-jdo
+    - location: /opt/vertx/bin/vertx-h2-jdo
       timeout: 300

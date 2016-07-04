@@ -61,7 +61,7 @@ documentation:
       application/json:
         example: |
           {
-            "customerId": "Duke",
+            "customerId": "Duke"
           }
     responses:
       201:
