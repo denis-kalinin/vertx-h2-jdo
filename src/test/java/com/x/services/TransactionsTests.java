@@ -89,11 +89,11 @@ public class TransactionsTests {
 		vertx.deployVerticle(mainVerticle, options, context.asyncAssertSuccess( h -> {
 			LOG.trace("MAIN VERTICLE deployed: {} at port {}", h, port);
 			//context.async().complete();
-		}));
-		api = RamlLoaders.fromUrl("http://localhost:"+port).load("/raml/accounts.yaml");
-		//Assert.assertThat(api.validate(), RamlMatchers.validates());
-		api.assumingBaseUri("http://localhost:"+port).failFast(false);
-		checking = api.createWebTarget(client.target("http://localhost:"+port));
+			api = RamlLoaders.fromUrl("http://localhost:"+port).load("/raml/accounts.yaml");
+			Assert.assertThat(api.validate(), RamlMatchers.validates());
+			api.assumingBaseUri("http://localhost:"+port).failFast(false);
+			checking = api.createWebTarget(client.target("http://localhost:"+port));
+		}));		
 	}
 	@AfterClass
 	public static void tearDown(TestContext context) {
