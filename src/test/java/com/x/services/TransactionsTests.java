@@ -69,13 +69,15 @@ public class TransactionsTests {
 	
 	@BeforeClass
 	public static void before(TestContext context){
+		/*
 		try {
-			port = NetworkUtils.getEphimeralPort();
+			port = NetworkUtils.getEphemeralPort();
 		} catch (Exception e) {
 			LOG.error("Failed to assign ephemeral port to test environment");
 			context.fail(e);
 		}
-		//port = 80;
+		*/
+		port = 8029;
 		LOG.info("Total amount of money on System account: {}", moneyPile);
 		vertx = Vertx.vertx();
 		JsonObject jsonOptions = new JsonObject();

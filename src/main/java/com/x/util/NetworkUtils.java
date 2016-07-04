@@ -41,7 +41,7 @@ public class NetworkUtils {
 	 * @return some ephemeral port number on loopback or -1 if failed
 	 * @throws Exception 
 	 */
-	public static int getEphimeralPort() throws Exception{
+	public static int getEphemeralPort() throws Exception{
 		try (ServerSocket server = new ServerSocket(0, 0, Inet4Address.getLoopbackAddress())) {
 			int port = server.getLocalPort();
 			server.close();

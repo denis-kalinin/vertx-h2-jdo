@@ -89,7 +89,7 @@ public class MainVerticle extends AbstractVerticle {
 		if(httpPort == port){
 			if(!NetworkUtils.isPortAvailable(httpPort, null)){
 				try {
-					port = NetworkUtils.getEphimeralPort();
+					port = NetworkUtils.getEphemeralPort();
 					LOG.warn("Port {} is not available. Ephimeral port choosen to start HTTP server: {}", httpPort, port);
 				} catch (Exception e) {
 					RuntimeException newE = new RuntimeException("Failed to assign ephimeral port", e);
