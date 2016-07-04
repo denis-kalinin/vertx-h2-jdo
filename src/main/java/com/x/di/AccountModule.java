@@ -51,7 +51,7 @@ public class AccountModule extends AbstractModule {
 		}
 		try{
 			Handlebars handlebars = new Handlebars();
-			Template template = handlebars.compile(source("/raml/accounts.yaml"));
+			Template template = handlebars.compile(source("/META-INF/raml/accounts.yaml"));
 			bind(Template.class).toInstance(template);
 		} catch (IOException e){
 			addError(e);
@@ -63,7 +63,7 @@ public class AccountModule extends AbstractModule {
 	protected PersistenceManagerFactory getPmf() throws MalformedURLException, ClassNotFoundException, URISyntaxException{
 		URL jarUrl = getClass().getProtectionDomain().getCodeSource().getLocation();
 		Path jarPath = Paths.get(jarUrl.toURI());
-		LOG.info("Path is {} URL is {}", jarPath, jarUrl.getPath());
+		LOG.trace("Path is {} URL is {}", jarPath, jarUrl.getPath());
 		File jarFile = jarPath.toFile();
 		if(jarFile.isFile()) jarFile = jarFile.getParentFile();
 		File databaseFile = new File(jarFile, "bank.db");

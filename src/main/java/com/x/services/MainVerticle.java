@@ -1,7 +1,6 @@
 package com.x.services;
 
 import io.vertx.core.Future;
-import io.vertx.core.Vertx;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.MessageCodec;
 import io.vertx.core.eventbus.ReplyException;
@@ -15,11 +14,13 @@ import com.github.jknack.handlebars.Template;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.x.LogbackInit;
 import com.x.di.AccountModule;
 import com.x.models.Account;
 import com.x.models.Balance;
 import com.x.models.ServiceMessage;
 import com.x.models.Transfer;
+import com.x.util.NetworkUtils;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.DeploymentOptions;
@@ -30,7 +31,14 @@ import io.vertx.ext.web.handler.StaticHandler;
 
 public class MainVerticle extends AbstractVerticle {
 	
-	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(MainVerticle.class);
+	private static final org.slf4j.Logger LOG;
+	
+	static {
+		LogbackInit.start();
+		LOG = org.slf4j.LoggerFactory.getLogger(MainVerticle.class);
+	}
+	
+
 	private DeploymentOptions workerDeploymentOptions = new DeploymentOptions().setWorker(true);
 	
 	@Inject
@@ -73,7 +81,11 @@ public class MainVerticle extends AbstractVerticle {
 		bankRouter.get("/transfers/:id").handler(this :: getTransferById);
 		bankRouter.get("/balance").handler(this :: getBalance);
 		
-		int port = config().getInteger("http.port", 8029);
+		int port = 80;
+		
+		if(!NetworkUtils.isPortAvailable(80, null)){
+			port = config().getInteger("http.port", 8029);
+		}
 		
 		vertx.deployVerticle(com.x.services.SubVerticle.class.getName());
 		//vertx.deployVerticle(injector.getInstance(com.x.services.AccountVerticle.class), workerDeploymentOptions);
@@ -89,12 +101,13 @@ public class MainVerticle extends AbstractVerticle {
 		//make raml files accessible
 		//router.route("/raml/*").handler(StaticHandler.create("raml").setCachingEnabled(false));
 		router.get("/raml/accounts.yaml").handler( this :: getYamlHandlebars);
-		router.route("/raml/*").handler(StaticHandler.create("raml").setCachingEnabled(false));
+		router.route("/raml/*").handler(StaticHandler.create("META-INF/raml").setCachingEnabled(false));
 		//register raml console
 		router.route("/raml-console/*").handler(
-				StaticHandler.create("webroot").setCachingEnabled(true).setEnableFSTuning(true));
+				StaticHandler.create("META-INF/webroot").setCachingEnabled(true).setEnableFSTuning(true));
 		//redirect root to raml console
 		router.get("/").handler(rc -> {
+			LOG.trace("index page");
 			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
 		vertx.createHttpServer()
@@ -283,12 +296,5 @@ public class MainVerticle extends AbstractVerticle {
 			rc.response().setStatusCode(500).putHeader("Content-Type", "text/plain")
 				.end(e.getMessage());
 		}
-	}
-	
-	//////////// main method if you want/////////
-	public static void main(String[] args) {
-		Vertx vertx = Vertx.vertx();
-		vertx.deployVerticle(new MainVerticle());
-		//io.vertx.core.Launcher launcher;
 	}
 }
