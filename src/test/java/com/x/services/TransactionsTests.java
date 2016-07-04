@@ -88,7 +88,7 @@ public class TransactionsTests {
 		LOG.info("Deploying HTTP at port {}", port);
 		vertx.deployVerticle(mainVerticle, options, context.asyncAssertSuccess( h -> {
 			LOG.trace("MAIN VERTICLE deployed: {} at port {}", h, port);
-			context.async().complete();
+			//context.async().complete();
 		}));
 		api = RamlLoaders.fromUrl("http://localhost:"+port).load("/raml/accounts.yaml");
 		//Assert.assertThat(api.validate(), RamlMatchers.validates());
