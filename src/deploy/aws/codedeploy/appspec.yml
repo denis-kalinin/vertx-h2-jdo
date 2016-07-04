@@ -11,5 +11,5 @@ permissions:
       - directory
 hooks:
   ApplicationStart:
-    - location: deployScript/start
+    - location: deployScripts/start
       timeout: 300
