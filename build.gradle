@@ -154,6 +154,7 @@ startScripts {
 task awsCodeDeploy(type: Copy){
 	into(relativePath(buildDir)+'/awsCodeDeploy')
 		from 'src/deploy/aws/codedeploy/appspec.yml'
+		into('deployScripts') { from fileTree (dir: 'src/deploy/aws/codedeploy/deployScripts') }
 	into(project.name){
 		into('lib'){ from configurations.runtime}
 		into('bin'){ from startScripts }
