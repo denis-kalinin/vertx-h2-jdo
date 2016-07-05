@@ -10,3 +10,4 @@
 ##  deployment as successful
 ##############################################################################
 sudo /opt/vertx/bin/vertx-h2-jdo &
+0
