@@ -69,15 +69,13 @@ public class TransactionsTests {
 	
 	@BeforeClass
 	public static void before(TestContext context){
-		/*
 		try {
 			port = NetworkUtils.getEphemeralPort();
 		} catch (Exception e) {
 			LOG.error("Failed to assign ephemeral port to test environment");
 			context.fail(e);
 		}
-		*/
-		port = 8029;
+		//port = 8029;
 		LOG.info("Total amount of money on System account: {}", moneyPile);
 		vertx = Vertx.vertx();
 		JsonObject jsonOptions = new JsonObject();
@@ -93,7 +91,8 @@ public class TransactionsTests {
 			Assert.assertThat(api.validate(), RamlMatchers.validates());
 			api.assumingBaseUri("http://localhost:"+port).failFast(false);
 			checking = api.createWebTarget(client.target("http://localhost:"+port));
-		}));		
+			context.async().complete();
+		}));
 	}
 	@AfterClass
 	public static void tearDown(TestContext context) {
