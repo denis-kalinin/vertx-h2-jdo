@@ -10,6 +10,9 @@ permissions:
     type:
       - directory
 hooks:
+  ApplicationStop:
+    - location: deployScripts/stop
+      timeout: 10
   ApplicationStart:
     - location: deployScripts/start
       timeout: 300
