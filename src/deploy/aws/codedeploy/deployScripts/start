@@ -1,8 +1,12 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 ##############################################################################
 ##
 ##  vertx-h2-jdo start up script for UN*X
 ##
+##  use "sudo" to open port 80
+##  path MUST conform with location in appspec.yml
+##  & at the end to run script in background, that allow CodeDeploy to mark
+##  deployment as successful
 ##############################################################################
-sudo /opt/vertx/bin/vertx-h2-jdo
+sudo /opt/vertx/bin/vertx-h2-jdo &
