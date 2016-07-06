@@ -8,6 +8,6 @@
 ##  path MUST conform with location in appspec.yml
 ##  & at the end to run script in background, that allow CodeDeploy to mark
 ##  deployment as successful
-## http://stackoverflow.com/questions/32085476/aws-code-deploy-appspec-isnt-starting-my-server
+##  http://stackoverflow.com/questions/32085476/aws-code-deploy-appspec-isnt-starting-my-server
 ##############################################################################
 sudo /opt/vertx/bin/vertx-h2-jdo > /dev/null 2> /dev/null < /dev/null &

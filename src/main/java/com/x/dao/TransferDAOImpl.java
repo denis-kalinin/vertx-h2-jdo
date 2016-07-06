@@ -14,6 +14,7 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import com.x.models.Account;
+import com.x.models.ServiceMessage;
 import com.x.models.Transfer;
 
 @Singleton
@@ -31,7 +32,7 @@ public class TransferDAOImpl implements TransferDAO {
 	}
 
 	@Override
-	public void commitTransfer(Transfer transferToCommit) {
+	public Transfer commitTransfer(Transfer transferToCommit) throws Exception {
 		LOG.trace("Transfering {}", transferToCommit);
 		PersistenceManager pm = pmf.getPersistenceManager();
 		//pm.getFetchPlan().setGroups("account-metainfo", "transfer-base");
@@ -39,29 +40,33 @@ public class TransferDAOImpl implements TransferDAO {
 		Transaction tx = pm.currentTransaction();
 		try{
 			tx.begin();
-			//Account from = pm.getObjectById(Account.class, transferToCommit.getFrom().getId());
-			//Account to = pm.getObjectById(Account.class, transferToCommit.getFrom().getId());
 			BigDecimal amount = transferToCommit.getAmount();
-			Account to = pm.getObjectById(Account.class, transferToCommit.getTo().getId());
-			to = pm.detachCopy(to);
-			to.setDeposit( to.getDeposit().add(amount));
-			transferToCommit.setTo(to);
-			if(transferToCommit.getFrom()!=null){
-				Account from = pm.getObjectById(Account.class, transferToCommit.getFrom().getId());
-				from = pm.detachCopy(from);
-				from.setDeposit(from.getDeposit().subtract(amount));
-				transferToCommit.setFrom(from);
-				//pm.makePersistent(from);
+			Account toAccount = transferToCommit.getTo();
+			//at this moment toAccount has only ID, other fields are empty, get account from database
+			toAccount = pm.getObjectById(Account.class, toAccount.getId());
+			//and detach a copy to update "deposit" field and then persist back to database together with transferToCommit 
+			toAccount = pm.detachCopy(toAccount);
+			toAccount.setDeposit( toAccount.getDeposit().add(amount));
+			pm.makePersistent(toAccount);
+			Account fromAccount = transferToCommit.getFrom();
+			//fromAccount may be null if account is credited/debited from outer service
+			if(fromAccount!=null && fromAccount.getId()!=null){
+				fromAccount = pm.getObjectById(Account.class, fromAccount.getId());
+				fromAccount = pm.detachCopy(fromAccount);
+				fromAccount.setDeposit(fromAccount.getDeposit().subtract(amount));
+				pm.makePersistent(fromAccount);
+			}else{
+				fromAccount = null;
 			}
-			//pm.detachCopy(from);
-			//pm.makePersistent(to);
-			//pm.detachCopy(to);
-			transferToCommit.setStatus(Transfer.Status.Success);
-			pm.makePersistent(transferToCommit);
+			//FIXME some policy here to define status
+			Transfer transferToPersist = new Transfer(toAccount, fromAccount, amount);
+			transferToPersist.setStatus(Transfer.Status.Success);
+			transferToPersist = pm.makePersistent(transferToPersist);
 			tx.commit();
-			pm.detachCopy(transferToCommit);
+			return pm.detachCopy(transferToPersist);
 		}catch (Exception e){
 			LOG.debug("Transfer exception", e);
+			throw e;
 		}finally{
 			if (tx.isActive()){tx.rollback();}
 			pm.close();
@@ -78,7 +83,8 @@ public class TransferDAOImpl implements TransferDAO {
 			return Optional.of(pm.detachCopy(transfer));
 		}
 		catch(javax.jdo.JDOObjectNotFoundException e){
-			return Optional.empty();
+			LOG.error("Failed to get transfer", e);
+			throw e;
 		}		
 		finally{
 			pm.close();

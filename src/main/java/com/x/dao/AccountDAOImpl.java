@@ -74,14 +74,16 @@ public class AccountDAOImpl implements AccountDAO {
 	}
 	
 	public Balance getBalance(){
-		PersistenceManager pm = pmf.getPersistenceManager();
-		
+		PersistenceManager pm = pmf.getPersistenceManager();		
 		Query<Account> query = pm.newQuery(Account.class);
 		query.setResult("count(this), sum(this.deposit)");
 		Object results[] = (Object[]) query.execute();
 		Balance balance = new Balance();
 		balance.setAccounts((long) results[0]);
-		balance.setBalance((BigDecimal) results[1]);
+		BigDecimal total = (BigDecimal) results[1];
+		if(total!=null){
+			balance.setBalance(total);
+		}
 		return balance;
 	}
 

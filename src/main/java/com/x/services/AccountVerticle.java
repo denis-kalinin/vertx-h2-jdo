@@ -89,8 +89,8 @@ public class AccountVerticle extends AbstractVerticle {
 				case "send": {
 					try{
 						Transfer transfer = (Transfer) message.body();
-						transferDao.commitTransfer(transfer);
-						message.reply(transfer);
+						Transfer commitedTransfer = transferDao.commitTransfer(transfer);
+						message.reply(commitedTransfer);
 					}catch(Exception e){
 						message.fail(500, e.getMessage());
 					}
@@ -98,11 +98,15 @@ public class AccountVerticle extends AbstractVerticle {
 				}
 				case "get" : {
 					String transferId = (String) message.body();
-					Optional<Transfer> opT = transferDao.getTransferById(transferId);
-					if(opT.isPresent()){
-						message.reply(opT.get());
-					}else{
-						message.fail(404, "Transfer "+transferId+" is not found.");
+					try{
+						Optional<Transfer> opT = transferDao.getTransferById(transferId);
+						if(opT.isPresent()){
+							message.reply(opT.get());
+						}else{
+							message.fail(404, "Transfer "+transferId+" is not found.");
+						}
+					}catch (Exception e){
+						message.fail(500, e.getMessage());
 					}
 					break;
 				}

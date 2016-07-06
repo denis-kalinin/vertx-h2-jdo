@@ -54,7 +54,7 @@ public class Account implements Serializable {
 	 * @return Account as POJO from JSON
 	 */
 	@JsonCreator
-	public static Account createAccountFromJSON(@JsonProperty("id") String id) {
+	public static Account buildAccountWithId(@JsonProperty("id") String id) {
 		Account account = new Account();
 		account.id = id;
 		return account;
@@ -102,7 +102,5 @@ public class Account implements Serializable {
 		} else if (!id.equals(other.id))
 			return false;
 		return true;
-	}
-	
-	
+	}	
 }

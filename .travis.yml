@@ -14,7 +14,9 @@ before_deploy:
   - mkdir -p aws_upload
   - cd build/awsCodeDeploy
   - zip -r ../../aws_upload/latest.zip . *
-  - cd ../..
+  - cd build/awsCodeDeploy/vertx-h2-jdo
+  - zip -r ../../../aws_upload/vertx-h2-jdo.zip . *
+  - cd ../../..
 deploy:
 - provider: s3
   access_key_id: AKIAIWOFZYSVBE7D4VJQ

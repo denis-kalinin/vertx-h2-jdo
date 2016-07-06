@@ -16,13 +16,18 @@
       application/json:
         example: |
           {
-            "from": 12
-            "to": 1
+            "from": 12,
+            "to": 1,
             "amount": 45.42
           }
     responses:
       201:
         description: Transfer commited
+        headers:
+          location:
+            displayName: Transfer GET URL
+            description: URL to fetch information about submitted Transfer
+            required: true
         body:
           application/json:
             example: |

@@ -211,7 +211,7 @@ public class MainVerticle extends AbstractVerticle {
 			if(result.succeeded()){
 				Transfer commitedTransfer = (Transfer) result.result().body();
 				rc.response().setStatusCode(201).putHeader("Content-Type", "application/json")
-					.putHeader("Location", "transfers/"+transfer.getId())
+					.putHeader("Location", "transfers/"+commitedTransfer.getId())
 					.end(Json.encodePrettily(commitedTransfer));
 			}else if (result.failed()){
 				int status = 400;

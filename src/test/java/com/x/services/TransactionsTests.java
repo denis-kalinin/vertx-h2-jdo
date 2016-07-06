@@ -47,6 +47,7 @@ import io.vertx.ext.unit.junit.VertxUnitRunner;
 import io.vertx.core.Vertx;
 import rx.Observable;
 import rx.Subscriber;
+import rx.subjects.PublishSubject;
 
 @RunWith(VertxUnitRunner.class)
 public class TransactionsTests {
@@ -66,6 +67,9 @@ public class TransactionsTests {
 	 * Total amount of money on system account.
 	 */
 	private static BigDecimal moneyPile = new BigDecimal(INITIAL_BALANCE).setScale(2, RoundingMode.HALF_UP);
+	
+	private static PublishSubject<Account> fromSubject;
+	private static PublishSubject<Account> toSubject;
 	
 	@BeforeClass
 	public static void before(TestContext context){
@@ -91,7 +95,8 @@ public class TransactionsTests {
 			Assert.assertThat(api.validate(), RamlMatchers.validates());
 			api.assumingBaseUri("http://localhost:"+port).failFast(false);
 			checking = api.createWebTarget(client.target("http://localhost:"+port));
-			context.async().complete();
+			//context.async().complete();
+			initAccounts();
 		}));
 	}
 	@AfterClass
@@ -117,38 +122,14 @@ public class TransactionsTests {
 
 	@Test
 	public void testTransfer(TestContext context){
-		final Async async = context.async();
-		//create accounts to send money from
-		Observable<Account> fromAccounts = Observable.just("Denis", "Ivan", "Alex")
-			.map( name -> {
-				return new Account(name);
-			})
-			.map( account -> {
-				//register account and get information back with RESTful
-				return saveAndGetAccount(account);
-			})
-			.map( savedAccount -> {
-				//put some money on account
-				return initDeposit( savedAccount, someMoneyFromPile(100) );
-			});
-		
-		Observable<Account> toAccounts = Observable.just("Duke", "Mike", "Sophie")
-				.map( name -> {
-					return new Account(name);
-				})
-				.map( account -> {
-					return saveAndGetAccount(account);
-				})
-				.map( savedAccount -> {
-					return initDeposit( savedAccount, someMoneyFromPile(1) );
-				});
-			
+		LOG.info("====== test transfers among accounts ======");
 		//for each account "from" transfer money "to" account
-		fromAccounts.zipWith(toAccounts, (from, to) -> {
-			Transfer t = new Transfer();
-			t.setAmount(randomMoney(from.getDeposit().doubleValue()));
-			t.setFrom(from);
-			t.setTo(to);
+		fromSubject.zipWith(toSubject, (from, to) -> {
+			BigDecimal amount = randomMoney(from.getDeposit().doubleValue());
+			Transfer t = new Transfer(to.getId(), from.getId(), amount);
+			//t.setAmount(randomMoney(from.getDeposit().doubleValue()));
+			//t.setFrom(from);
+			//t.setTo(to);
 			return sendTransfer(t);
 		}).subscribe( 
 			transfer -> {
@@ -156,9 +137,51 @@ public class TransactionsTests {
 			},
 			error -> {context.fail(error);},
 			() -> {
-				async.complete();
+				context.async().complete();
 			}
 		);
+	}
+	
+	//@Test
+	public void testTransferTooBigAmount(TestContext context){
+		LOG.info("======= test to transfer amount exceeding account deposit =======");
+	}
+	
+	private static void initAccounts(){
+		//create accounts to send money from
+				Observable<Account> fromAccounts = Observable.just("Denis", "Ivan", "Alex")
+					.map( name -> {
+						return new Account(name);
+					})
+					.map( account -> {
+						//register account and get information back with RESTful
+						return saveAndGetAccount(account);
+					})
+					.map( savedAccount -> {
+						//put some money on account
+						return initDeposit( savedAccount, someMoneyFromPile(100) );
+					});
+				
+				fromSubject = PublishSubject.create();
+				fromAccounts.subscribe(fromSubject);
+
+				
+				Observable<Account> toAccounts = Observable.just("Duke", "Mike", "Sophie")
+						.map( name -> {
+							return new Account(name);
+						})
+						.map( account -> {
+							return saveAndGetAccount(account);
+						})
+						.map( savedAccount -> {
+							return initDeposit( savedAccount, someMoneyFromPile(1) );
+						});
+				
+				toSubject = PublishSubject.create();
+				toAccounts.subscribe(toSubject);
+				
+				//fromSubject.subscribe();
+				//toSubject.subscribe();
 	}
 	
 	private static Account saveAndGetAccount(Account account){
@@ -200,21 +223,21 @@ public class TransactionsTests {
 		return savedTransfer;
 	}
 	
-	private Transfer sendTransfer(Transfer transfer){
+	private static Transfer sendTransfer(Transfer transfer){
 		WebTarget webTarget = checking.path("/bank/transfers");
 		//Response resp = webTarget.request().post(Entity.json(transfer));
 		Response resp = webTarget.request().post(Entity.json(Json.encode(transfer)));
 		Assert.assertEquals("Status code SHOULD BE 201", 201, resp.getStatus());
-		LOG.trace("Violations: {}", checking.getLastReport());
-		Assert.assertTrue(RamlMatchers.hasNoViolations().matches(checking.getLastReport()));
+		Assert.assertTrue("RAML violations: " + checking.getLastReport().toString(), RamlMatchers.hasNoViolations().matches(checking.getLastReport()));
 		//Transfer commitedTransfer = mapper.readValue(resp.readEntity(String.class), Transfer.class);
 		Transfer commitedTransfer = resp.readEntity(Transfer.class);
 		Assert.assertNotNull("Commited transfer has no ID", commitedTransfer.getId());
-		
 		List<Object> locations = resp.getHeaders().get("Location");
 		Assert.assertNotNull("Location header SHOULD not be null", locations);
 		Assert.assertFalse("Location header SHOULD not be empty", locations.isEmpty());
 		String location = (String) locations.get(0);
+		Assert.assertNotNull("Created transfer doesn't return resource location", location);
+		Assert.assertFalse("Transfer resource Location " + location +" contains \"null\"", StringUtils.contains(location,  "null"));
 		webTarget = checking.path("/bank/"+location);
 		Response transferResponse = webTarget.request().get();
 		LOG.trace("Violations: {}", checking.getLastReport());
@@ -235,28 +258,33 @@ public class TransactionsTests {
 		});
 	}
 	
-	private Account initDeposit(Account account, BigDecimal amount){
+	private static Account initDeposit(Account account, BigDecimal amount){
 		LOG.debug("Add initial deposit of {} to account {}", amount, account);
 		Assert.assertNotNull("Account ID SHOULD not be NULL", account.getId());
-		Transfer initTransfer = new Transfer();
-		initTransfer.setAmount(amount);
-		initTransfer.setTo(account);
+		Transfer initTransfer = new Transfer(account.getId(), null, amount);
+		//initTransfer.setAmount(amount);
+		//initTransfer.setTo(account);
 		initTransfer = sendTransfer(initTransfer);
 		Assert.assertNotNull("Transfer has no ID", initTransfer.getId());
 		Assert.assertNotNull("Transfer has no TO", initTransfer.getTo());
 		return getAccountById(initTransfer.getTo().getId());
 	}
-	
-	private synchronized BigDecimal randomMoney(double max){
+	/**
+	 * @param max
+	 * @return random number that is less than <code>max</code>
+	 */
+	private static BigDecimal randomMoney(double max){
 		BigDecimal maxDecimal = new BigDecimal(max);
 		BigDecimal randFromDouble = new BigDecimal(Math.random());
 		BigDecimal actualRandom = maxDecimal.multiply(randFromDouble).setScale(2, RoundingMode.HALF_UP);
 		return actualRandom;
 	}
 	
-	private BigDecimal someMoneyFromPile(double max){
+	private static BigDecimal someMoneyFromPile(double max){
 		BigDecimal randomMoney = randomMoney(max);
-		moneyPile = moneyPile.subtract(randomMoney);
+		synchronized(moneyPile){
+			moneyPile = moneyPile.subtract(randomMoney);
+		}
 		return randomMoney;
 	}
 	
@@ -273,7 +301,7 @@ public class TransactionsTests {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void printAllAccounts(){
+	private static void printAllAccounts(){
 		WebTarget webTarget = checking.path("/bank/accounts");
 		Response resp = webTarget.request().get();
 		Class<? extends List<Account>> cl = (Class<? extends List<Account>>) new ArrayList<Account>().getClass();
@@ -281,7 +309,7 @@ public class TransactionsTests {
 		System.out.println(StringUtils.join(resp.readEntity(cl), "\r\n"));
 	}
 	@SuppressWarnings("unchecked")
-	private void printAllTransfers(){
+	private static void printAllTransfers(){
 		WebTarget webTarget = checking.path("/bank/transfers");
 		Response resp = webTarget.request().get();
 		Class<? extends List<Transfer>> cl = (Class<? extends List<Transfer>>) new ArrayList<Transfer>().getClass();

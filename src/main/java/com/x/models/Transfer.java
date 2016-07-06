@@ -2,11 +2,9 @@ package com.x.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Collection;
 import java.util.Date;
 
 import javax.jdo.annotations.Column;
-import javax.jdo.annotations.DatastoreIdentity;
 import javax.jdo.annotations.FetchGroup;
 import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
@@ -30,6 +28,11 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 		@Persistent(name="status")
 })
 //@JsonIdentityInfo(generator=ObjectIdGenerators.PropertyGenerator.class, property="id")
+/**
+ * Money transfer between accounts.
+ * @author Kalinin_DP
+ *
+ */
 public class Transfer implements Serializable {
 	private static final long serialVersionUID = -7655147924492209453L;
 	@PrimaryKey
@@ -54,92 +57,113 @@ public class Transfer implements Serializable {
 	private Status status;
 	private ServiceMessage message;
 	
-	public Transfer(){}
-	
-	public Transfer(@JsonProperty("to") String toId, @JsonProperty("from") String fromId){
+	/**
+	 * Creates money <code>transfer</code> object from account <code>fromId</code> to account <code>toId</code> 
+	 * @param toId credited account ID
+	 * @param fromId debited account ID
+	 */
+	public Transfer(@JsonProperty("to") String toId, @JsonProperty("from") String fromId, @JsonProperty("amount") BigDecimal amount){
 		if(toId!=null){
-			this.to = Account.createAccountFromJSON(toId);
+			this.to = Account.buildAccountWithId(toId);
 		}
 		if(fromId!=null){
-			this.from = Account.createAccountFromJSON(fromId);
+			this.from = Account.buildAccountWithId(fromId);
+		}
+		if(amount!=null){
+			this.amount = amount;
 		}
 	}
 	
+	public Transfer (Account toAccount, Account fromAccount, BigDecimal amount){
+		to = toAccount;
+		from = fromAccount;
+		this.amount = amount;
+	}
+	/**
+	 * @return <code>id</code> of registered transfer
+	 */
 	public String getId(){
 		return id;
 	}
-	
+	/**
+	 * @return debited account
+	 */
 	public Account getFrom() {
 		return from;
 	}
 
-
-	public void setFrom(Account from) {
-		this.from = from;
-	}
-
-
+	/**
+	 * @return credited account
+	 */
 	public Account getTo() {
 		return to;
 	}
 
-
-	public void setTo(Account to) {
-		this.to = to;
-	}
-
-
+	/**
+	 * @return amount of transfer
+	 */
 	public BigDecimal getAmount() {
 		return amount;
 	}
 
-
+	/**
+	 * Sets amount of transfer
+	 * @param amount
+	 */
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 
-
+	/**
+	 * @return date of transfer's registration
+	 */
 	public Date getDate() {
 		return date;
 	}
-
-
-	public void setDate(Date date) {
-		this.date = date;
-	}
-
-
-	public Status getStatus() {
-		return status;
-	}
-
-
+	/**
+	 * Sets resulting status of transfer
+	 * @param status
+	 */
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-
-
+	/**
+	 * @return {@linkplain Status Status} of registered transfer : {@linkplain Status#Failed} or {@linkplain Status#Success}
+	 */
+	public Status getStatus() {
+		return status;
+	}
+	/**
+	 * Sets transfer result message : error or failing reason
+	 * @param message
+	 */
+	public void setMessage(ServiceMessage message){
+		this.message = message;
+	}
+	/**
+	 * @return description of transfer result: failing reasons, for example
+	 */
 	public ServiceMessage getMessage() {
 		return message;
 	}
 
-
-	public void setMessage(ServiceMessage message) {
-		this.message = message;
-	}
-
-
 	public enum Status{
+		/**
+		 * Transfer succeeded
+		 */
 		Success,
+		/**
+		 * Transfer failed
+		 */
 		Failed;
 	}
 	
 	@Override
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
-		sb.append("Transfer ID=").append(id).append(" Sum=").append(amount).append(" From=")
+		sb.append("Transfer ID=").append(id).append(" amount=").append(amount).append(" from=")
 			.append(from != null ? (from.getCustomerId() == null ? from.getId() : from.getCustomerId()) : null)
-			.append(" To=")
+			.append(" to=")
 			.append(to != null ? (to.getCustomerId() == null ? to.getId() : to.getCustomerId() ) : null)
 			.append(" date=").append(date);
 		return sb.toString();

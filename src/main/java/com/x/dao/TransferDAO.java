@@ -9,7 +9,7 @@ import com.x.models.Transfer;
 public interface TransferDAO {
 	
 	List<Transfer> getTranfersForAccount(String accountId);
-	void commitTransfer(Transfer transferToCommit);
+	Transfer commitTransfer(Transfer transferToCommit) throws Exception;
 	Optional<Transfer> getTransferById(String id);
 	Collection<Transfer> getTransfers();
 }
