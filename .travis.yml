@@ -14,7 +14,7 @@ before_deploy:
   - mkdir -p aws_upload
   - cd build/awsCodeDeploy
   - zip -r ../../aws_upload/latest.zip . *
-  - cd build/awsCodeDeploy/vertx-h2-jdo
+  - cd vertx-h2-jdo
   - zip -r ../../../aws_upload/vertx-h2-jdo.zip . *
   - cd ../../..
 deploy:
