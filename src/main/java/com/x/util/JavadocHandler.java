@@ -26,7 +26,9 @@ public class JavadocHandler {
 				Path javadocPath = jarFile.toPath().getParent().resolve("javadoc");
 				if(javadocPath.toFile().isDirectory()){
 					LOG.info("/javadoc/* is served from {}", javadocPath.toString());
-					StaticHandler javadocHandler = StaticHandler.create(javadocPath.toString())
+					StaticHandler javadocHandler = StaticHandler.create()
+						.setAllowRootFileSystemAccess(true)
+						.setWebRoot(javadocPath.toString())
 						.setFilesReadOnly(true);
 					return Optional.of(javadocHandler);
 				}
