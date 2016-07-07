@@ -12,6 +12,7 @@ import io.vertx.ext.web.handler.StaticHandler;
 
 
 public class JavadocHandler {
+	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(JavadocHandler.class);
 	/**
 	 * Gets handler for serving Javadoc if application is launched from jar-file
 	 * @return Optional of handler
@@ -24,12 +25,21 @@ public class JavadocHandler {
 			if( jarFile.isFile() ){
 				Path javadocPath = jarFile.toPath().getParent().resolve("javadoc");
 				if(javadocPath.toFile().isDirectory()){
+					LOG.info("/javadoc/* is served from {}", javadocPath.toString());
 					StaticHandler javadocHandler = StaticHandler.create(javadocPath.toString())
 						.setFilesReadOnly(true);
 					return Optional.of(javadocHandler);
 				}
+			}else{
+				LOG.warn("Javadoc is not available on site, becuase app is not running from jar-file");
 			}
-		}catch (Exception e){}
+		}catch (Exception e){
+			if(LOG.isTraceEnabled()){
+				LOG.error("Failed to get URL for source location", e);
+			}else{
+				LOG.error("{}", e.getMessage());
+			}
+		}
 		return Optional.empty();
 	}
 
