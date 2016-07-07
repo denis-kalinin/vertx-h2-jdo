@@ -22,6 +22,7 @@ import com.x.models.Account;
 import com.x.models.Balance;
 import com.x.models.ServiceMessage;
 import com.x.models.Transfer;
+import com.x.util.JavadocHandler;
 import com.x.util.NetworkUtils;
 
 import io.vertx.core.AbstractVerticle;
@@ -91,6 +92,7 @@ public class MainVerticle extends AbstractVerticle {
 				try {
 					port = NetworkUtils.getEphemeralPort();
 					LOG.warn("Port {} is not available. Ephimeral port choosen to start HTTP server: {}", httpPort, port);
+					LOG.info("To specify your port - adjust file \"config.json\" and run \"java -jar vertx-h2-jdo.jar -conf config.json\"");
 				} catch (Exception e) {
 					RuntimeException newE = new RuntimeException("Failed to assign ephimeral port", e);
 					LOG.error(newE.getMessage());
@@ -127,6 +129,11 @@ public class MainVerticle extends AbstractVerticle {
 			LOG.trace("index page");
 			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
+		
+		JavadocHandler.getHandler().ifPresent( handler -> {
+			router.get("/javadoc/*").handler(handler);
+		});
+		
 		LOG.info("HttpServert binding to port {}", port);
 		HttpServer httpServer = vertx.createHttpServer()
 		.requestHandler(router::accept)

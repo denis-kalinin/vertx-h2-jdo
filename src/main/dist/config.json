@@ -1,0 +1,4 @@
+{
+  "howToUseThisConfig" : "java -jar vertx-h2-jdo.jar -conf config.json",
+  "http.port" : 8082
+}

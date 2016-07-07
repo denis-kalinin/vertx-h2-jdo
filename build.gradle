@@ -126,6 +126,19 @@ jar {
 	//with jar
 }
 
+task sourcesJar(type: Jar, dependsOn: classes, description: 'Generates sources jar-file') {
+	classifier = 'sources'
+	from sourceSets.main.allSource
+}
+task javadocJar(type: Jar, dependsOn: javadoc, description: 'Put Javadoc API documentation in jar-file') {
+	classifier = 'javadoc'
+	from javadoc.destinationDir
+}
+artifacts {
+	archives sourcesJar
+	archives javadocJar
+}
+
 //fatjar is not working with JDO from Datanucleus...
 /*
 task fatJar (type: Jar) {
@@ -151,7 +164,7 @@ startScripts {
 		unixScriptFile.text = unixScriptFile.text.replace('$APP_HOME/lib/' + jar.baseName + '.jar', '$APP_HOME/' + jar.baseName + '.jar')
 	}
 }
-task awsCodeDeploy(type: Copy){
+task awsCodeDeploy(type: Copy, description: 'Prepares distribution for AWS CodeDeploy'){
 	into(relativePath(buildDir)+'/awsCodeDeploy')
 		from 'src/deploy/aws/codedeploy/appspec.yml'
 		into('deployScripts') { from fileTree (dir: 'src/deploy/aws/codedeploy/deployScripts') }
@@ -160,8 +173,11 @@ task awsCodeDeploy(type: Copy){
 		into('bin'){ from startScripts }
 		from jar
 		from fileTree(dir: 'src/main/dist')
+		into('javadoc'){ from javadoc }
+		from sourcesJar
 	}
 }
+//awsCodeDeploy.dependsOn javadocJar, sourcesJar
 assemble.dependsOn awsCodeDeploy
 //assemble.dependsOn fatJar
 
