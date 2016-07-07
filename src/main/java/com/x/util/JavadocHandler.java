@@ -24,7 +24,7 @@ public class JavadocHandler {
 			if( jarFile.isFile() ){
 				Path javadocPath = jarFile.toPath().getParent().resolve("javadoc");
 				if(javadocPath.toFile().isDirectory()){
-					StaticHandler javadocHandler = StaticHandler.create("C:\\Users\\Kalinin_DP\\Documents\\UK\\workspace\\vertx-h2-jdo\\build\\awsCodeDeploy\\vertx-h2-jdo\\javadoc")
+					StaticHandler javadocHandler = StaticHandler.create(javadocPath.toString())
 						.setFilesReadOnly(true);
 					return Optional.of(javadocHandler);
 				}
