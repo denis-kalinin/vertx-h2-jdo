@@ -23,5 +23,4 @@ public class JarUtils {
 		}catch(Exception e){}
 		return Optional.empty();
 	}
-
 }

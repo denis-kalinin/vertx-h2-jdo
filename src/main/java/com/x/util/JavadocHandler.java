@@ -15,7 +15,7 @@ public class JavadocHandler {
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(JavadocHandler.class);
 	/**
 	 * Gets handler for serving Javadoc if application is launched from jar-file
-	 * @return Optional of handler
+	 * @return {@linkplain Optional} of {@linkplain Handler handler}
 	 */
 	public static Optional<Handler<RoutingContext>> getHandler(){
 		try{
@@ -33,7 +33,7 @@ public class JavadocHandler {
 					return Optional.of(javadocHandler);
 				}
 			}else{
-				LOG.warn("Javadoc is not available on site, becuase app is not running from jar-file");
+				LOG.warn("Javadoc will not be available on web-site, becuase app is not running from jar-file");
 			}
 		}catch (Exception e){
 			if(LOG.isTraceEnabled()){

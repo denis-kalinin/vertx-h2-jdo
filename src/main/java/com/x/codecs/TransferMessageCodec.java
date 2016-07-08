@@ -6,7 +6,11 @@ import io.vertx.core.eventbus.MessageCodec;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.x.models.Transfer;
-
+/**
+ * A message codec allows an {@linkplain Transfer} message type to be marshalled across the event bus.
+ * @author Kalinin_DP
+ * @see MessageCodec
+ */
 public class TransferMessageCodec implements MessageCodec<Transfer, Transfer>{
 
 	@Override

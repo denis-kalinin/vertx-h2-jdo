@@ -6,7 +6,11 @@ import io.vertx.core.eventbus.MessageCodec;
 import org.apache.commons.lang3.SerializationUtils;
 
 import com.x.models.Balance;
-
+/**
+ * A message codec allows an {@linkplain Balance} message type to be marshalled across the event bus.
+ * @author Kalinin_DP
+ * @see MessageCodec
+ */
 public class BalanceMessageCodec implements MessageCodec<Balance, Balance>{
 
 	@Override

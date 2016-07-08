@@ -11,18 +11,24 @@ import java.util.Collection;
 public class NetworkUtils {
 	/**
 	 * Checks if <code>port</code> is available on specified IP-addresses (if not specified &ndash; <code>loopback</code> address is used).
-	 * @param port
-	 * @param addresses
-	 * @return <code>false</code> if the <code>port</code> is occupied, e.g. is opened on that <code>addresses</code>.
+	 * @param port tcp-port to check
+	 * @param addresses IP-addresses to check
+	 * @return <code>false</code> if the <code>port</code> is occupied <strong>at least</strong> on one IP-address, e.g. is opened on that <code>addresses</code>.
 	 */
 	public static boolean isPortsAvailable(int port, Collection<? extends InetAddress> addresses){
 		if(addresses==null || addresses.isEmpty()) addresses = Arrays.asList((Inet4Address)Inet4Address.getLoopbackAddress());
 		for(InetAddress ia : addresses){
 			boolean portAvailable = isPortAvailable(port, ia);
-		    if(!portAvailable) return portAvailable;
+			if(!portAvailable) return portAvailable;
 		}
 		return true;
 	}
+	/**
+	 * Checks if TCP-port available on specified IP-address
+	 * @param port tcp-port to check
+	 * @param address IP to check
+	 * @return <code>true</code> if the <code>port</code> is available, otherwise &mdash; <code>false</code>
+	 */
 	public static boolean isPortAvailable(int port, InetAddress address){
 		if (port < 1) return false;
 		if(address==null) address = (Inet4Address) Inet4Address.getLoopbackAddress();
@@ -39,7 +45,7 @@ public class NetworkUtils {
 	
 	/**
 	 * @return some ephemeral port number on loopback or -1 if failed
-	 * @throws Exception 
+	 * @throws Exception if failed to open/close port because of I/O or security. 
 	 */
 	public static int getEphemeralPort() throws Exception{
 		try (ServerSocket server = new ServerSocket(0, 0, Inet4Address.getLoopbackAddress())) {

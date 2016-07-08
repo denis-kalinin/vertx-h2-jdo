@@ -7,7 +7,11 @@ import java.net.URL;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 
-
+/**
+ * This is stand-alone launcher to start application from IDE
+ * @author Kalinin_DP
+ *
+ */
 public class Launcher {
 
 	public static void main(String[] args){
@@ -25,7 +29,7 @@ public class Launcher {
 	/**
 	 * @return <code>true</code> if <code>Main-Verticle</code> attribute is found in <code>MANIFEST.MF</code>
 	 */
-	private static boolean hasMainVerticle(){
+	public static boolean hasMainVerticle(){
 		URL manifestUrl = Launcher.class.getClassLoader().getResource("META-INF/MANIFEST.MF");
 		try(InputStream stream = manifestUrl.openStream()){
 			Manifest manifest = new Manifest(stream);

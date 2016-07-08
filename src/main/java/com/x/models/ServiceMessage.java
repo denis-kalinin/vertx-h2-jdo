@@ -1,7 +1,11 @@
 package com.x.models;
 
 import java.io.Serializable;
-
+/**
+ * 
+ * @author Kalinin_DP
+ *
+ */
 public class ServiceMessage implements Serializable{
 	
 	private static final long serialVersionUID = 6841546448203376080L;

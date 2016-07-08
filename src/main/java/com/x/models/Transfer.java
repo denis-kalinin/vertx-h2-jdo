@@ -61,6 +61,7 @@ public class Transfer implements Serializable {
 	 * Creates money <code>transfer</code> object from account <code>fromId</code> to account <code>toId</code> 
 	 * @param toId credited account ID
 	 * @param fromId debited account ID
+	 * @param amount of money to send
 	 */
 	public Transfer(@JsonProperty("to") String toId, @JsonProperty("from") String fromId, @JsonProperty("amount") BigDecimal amount){
 		if(toId!=null){
@@ -73,7 +74,12 @@ public class Transfer implements Serializable {
 			this.amount = amount;
 		}
 	}
-	
+	/**
+	 * Creates transfer to commit
+	 * @param toAccount credited account
+	 * @param fromAccount debited account
+	 * @param amount of money to send
+	 */
 	public Transfer (Account toAccount, Account fromAccount, BigDecimal amount){
 		to = toAccount;
 		from = fromAccount;
@@ -108,7 +114,7 @@ public class Transfer implements Serializable {
 
 	/**
 	 * Sets amount of transfer
-	 * @param amount
+	 * @param amount of money
 	 */
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
@@ -122,7 +128,7 @@ public class Transfer implements Serializable {
 	}
 	/**
 	 * Sets resulting status of transfer
-	 * @param status
+	 * @param status transfer {@linkplain Status}
 	 */
 	public void setStatus(Status status) {
 		this.status = status;
@@ -135,7 +141,7 @@ public class Transfer implements Serializable {
 	}
 	/**
 	 * Sets transfer result message : error or failing reason
-	 * @param message
+	 * @param message result of processed transfer
 	 */
 	public void setMessage(ServiceMessage message){
 		this.message = message;
@@ -146,7 +152,13 @@ public class Transfer implements Serializable {
 	public ServiceMessage getMessage() {
 		return message;
 	}
-
+	/**
+	 * Statuses of processed transfers.
+	 * @see Status#Success
+	 * @see Status#Failed
+	 * @author Kalinin_DP
+	 *
+	 */
 	public enum Status{
 		/**
 		 * Transfer succeeded

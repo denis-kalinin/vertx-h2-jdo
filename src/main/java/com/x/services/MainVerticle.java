@@ -4,11 +4,9 @@ import io.vertx.core.Future;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.MessageCodec;
 import io.vertx.core.eventbus.ReplyException;
-import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.Json;
 
 import java.io.IOException;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
 
@@ -32,6 +30,13 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 
+/**
+ * <p>Vert.x verticle that starts {@linkplain io.vertx.core.http.HttpServer http server} and
+ * registers {@linkplain Router routes} for RESTful API, Javadoc, RAML and RAML web-console.</p>
+ * 
+ * @author Kalinin_DP
+ *
+ */
 public class MainVerticle extends AbstractVerticle {
 	
 	private static final org.slf4j.Logger LOG;
@@ -104,8 +109,6 @@ public class MainVerticle extends AbstractVerticle {
 			port = httpPort;
 		}
 		
-		vertx.deployVerticle(com.x.services.SubVerticle.class.getName());
-		//vertx.deployVerticle(injector.getInstance(com.x.services.AccountVerticle.class), workerDeploymentOptions);
 		vertx.deployVerticle(injector.getInstance(AccountVerticle.class), workerDeploymentOptions, ar -> {
 			if(ar.succeeded()){
 				startFuture.complete();
@@ -116,17 +119,20 @@ public class MainVerticle extends AbstractVerticle {
 		});
 		//mount bank API
 		router.mountSubRouter("/bank", bankRouter);
-		//make raml files accessible
-		//router.route("/raml/*").handler(StaticHandler.create("raml").setCachingEnabled(false));
+		//main RAML file is dynamic - handle it separately from other raml-files
 		router.get("/raml/accounts.yaml").handler( this :: getYamlHandlebars);
-		router.route("/raml/*").handler(StaticHandler.create("META-INF/raml").setCachingEnabled(false));
+		
+		StaticHandler staticRamlHandler = StaticHandler.create("META-INF/raml")
+				.setFilesReadOnly(true).setCachingEnabled(true).setEnableFSTuning(true);
+		//register static raml files
+		router.route("/raml/*").handler(staticRamlHandler);
+		
+		StaticHandler apiConsoleHandler = StaticHandler.create("META-INF/webroot")
+				.setFilesReadOnly(true).setCachingEnabled(true).setEnableFSTuning(true);
 		//register raml console
-		StaticHandler staticHandler = StaticHandler.create("META-INF/webroot").setFilesReadOnly(true)
-			.setCachingEnabled(true).setEnableFSTuning(true);
-		router.route("/raml-console/*").handler(staticHandler);
+		router.route("/raml-console/*").handler(apiConsoleHandler);
 		//redirect root to raml console
 		router.get("/").handler(rc -> {
-			LOG.trace("index page");
 			rc.response().setStatusCode(302).putHeader("Location", "/raml-console/?raml=/raml/accounts.yaml").end();
 		});
 		
@@ -135,21 +141,19 @@ public class MainVerticle extends AbstractVerticle {
 		});
 		
 		LOG.info("HttpServert binding to port {}", port);
-		HttpServer httpServer = vertx.createHttpServer()
-		.requestHandler(router::accept)
-		.listen(port);
-		
-		//LOG.info("Http server is listening on port {}", httpServer.);
+		vertx.createHttpServer()
+			.requestHandler(router::accept)
+			.listen(port);
 	}
 	/**
-	 * Substitute embedded Guice module with <code>customModule</code>.
+	 * Substitutes embedded Guice module with <code>customModule</code>.
 	 * @param customModule to substitute default one.
 	 */
 	public void setGuiceModule(Module customModule){
 		this.guiceModule = customModule;
 	}
 	///////////////////ROUTE HANDLERS///////////////////
-	protected void getAccounts(RoutingContext rc){
+	private void getAccounts(RoutingContext rc){
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "getAll");
 		vertx.eventBus().send("accounts", null, deliveryOptions, result -> {
 			if(result.succeeded()){
@@ -161,7 +165,7 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 	
-	protected void getAccountById(RoutingContext rc){
+	private void getAccountById(RoutingContext rc){
 		String id = rc.request().getParam("id");
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "get");
 		vertx.eventBus().send("accounts", id, deliveryOptions, result -> {
@@ -186,7 +190,7 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 	
-	protected void addAccount(RoutingContext rc){
+	private void addAccount(RoutingContext rc){
 		Account account =  Json.decodeValue(rc.getBodyAsString(), Account.class);
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "addAccount");
 		vertx.eventBus().send("accounts", account, deliveryOptions, result -> {
@@ -211,7 +215,7 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 	
-	protected void sendTransfer(RoutingContext rc) {
+	private void sendTransfer(RoutingContext rc) {
 		Transfer transfer = Json.decodeValue(rc.getBodyAsString(), Transfer.class);
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "send");
 		vertx.eventBus().send("transfers", transfer, deliveryOptions, result -> {
@@ -239,7 +243,7 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 	
-	protected void getTransferById(RoutingContext rc){
+	private void getTransferById(RoutingContext rc){
 		String id = rc.request().getParam("id");
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "get");
 		vertx.eventBus().send("transfers", id, deliveryOptions, result -> {
@@ -265,7 +269,7 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 	
-	protected void getTransfers(RoutingContext rc){
+	private void getTransfers(RoutingContext rc){
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "getAll");
 		vertx.eventBus().send("transfers", null, deliveryOptions, result -> {
 			if(result.succeeded()){
@@ -285,7 +289,7 @@ public class MainVerticle extends AbstractVerticle {
 		});
 	}
 	
-	protected void getBalance(RoutingContext rc){
+	private void getBalance(RoutingContext rc){
 		DeliveryOptions deliveryOptions = new DeliveryOptions().addHeader("method", "getBalance");
 		vertx.eventBus().send("accounts", null, deliveryOptions, result -> {
 			if(result.succeeded()){
@@ -309,12 +313,16 @@ public class MainVerticle extends AbstractVerticle {
 			}
 		});
 	}
-	
+	/**
+	 * Handles method to process request for RAML-file, embedding <code>baseUri</code> 
+	 * as received from <code>Host</code> HTTP-header into response. 
+	 * @param rc {@linkplain RoutingContext} automatically provided by vert.x handler.
+	 */
 	protected void getYamlHandlebars(RoutingContext rc){
 		try {
 			String hostAndPort = rc.request().getHeader("Host");
 			if(hostAndPort == null){
-				throw new IOException("HTTP request for /raml/accounts.yaml MUST contain \"Host\" HTTP header!");
+				throw new IOException("HTTP request for "+ rc.request().absoluteURI() +" MUST contain \"Host\" HTTP header!");
 			}
 			String yamlResult = template.apply(hostAndPort);
 			rc.response().setStatusCode(200).putHeader("Content-Type", "application/x-yaml")

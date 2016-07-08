@@ -8,7 +8,11 @@ import com.x.models.Account;
 
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.eventbus.MessageCodec;
-
+/**
+ * A message codec allows an {@linkplain Account} message type to be marshalled across the event bus.
+ * @author Kalinin_DP
+ * @see MessageCodec
+ */
 @Singleton
 public class AccountMessageCodec implements MessageCodec<Account, Account> {
 

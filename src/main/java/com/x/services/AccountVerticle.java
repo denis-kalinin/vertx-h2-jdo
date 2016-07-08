@@ -1,12 +1,9 @@
 package com.x.services;
 
-import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 
-import com.google.common.collect.ImmutableMap;
 import com.x.dao.AccountDAO;
 import com.x.dao.TransferDAO;
 import com.x.models.Account;
@@ -19,7 +16,6 @@ import io.vertx.core.json.Json;
 public class AccountVerticle extends AbstractVerticle {
 	
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(AccountVerticle.class);
-	private Map<String, Account> accounts = new ConcurrentHashMap<>();
 	
 	@Inject
 	private AccountDAO accountDao;
@@ -124,75 +120,5 @@ public class AccountVerticle extends AbstractVerticle {
 				}
 			}
 		});
-		/*return account by id
-		vertx.eventBus().consumer("account", message -> {
-			vertx.executeBlocking(
-				fut -> {
-					String accountId = (String) message.body();
-					if(accounts.containsKey(accountId)){
-						JsonObject jsonObject = new JsonObject(Json.encode(accounts.get(accountId)));
-						fut.complete(jsonObject);
-					}else{
-						fut.fail("Account #"+accountId+" is not found.");
-					}
-				}, 
-				false,
-				res -> {
-					if(res.failed()){
-						message.fail(404, "OOPS! "+res.cause().getMessage());
-					} else {
-						message.reply(res.result());
-					}
-				}
-			);
-		});
-		//create account for user and return detached one
-		vertx.eventBus().consumer("addAccount", message -> {
-			vertx.executeBlocking(
-				fut -> {
-					Account account = (Account) message.body();
-					JsonObject jsonObject = new JsonObject(Json.encode(account));
-					fut.complete(jsonObject);
-				}, 
-				false,
-				res -> {
-					if(res.failed()){
-						message.fail(404, "OOPS! "+res.cause().getMessage());
-					} else {
-						message.reply(res.result());
-					}
-				}
-			);
-		});
-		*/
-	}
-	/**
-	 * 
-	 * @param account
-	 * @throws IllegalArgumentException if account parameter is wrong
-	 * @throws IllegalStateException if account is already registered
-	 */
-	public void addAccount(Account account){
-		if(account == null) throw new IllegalArgumentException("account is NULL");
-		if(account.getId() == null) throw new IllegalArgumentException("account has no id");
-		if(!accounts.containsKey(account.getId())){
-			accounts.put(account.getId(), account);
-		}else{
-			throw new IllegalStateException("Account "+account.getId()+" is already registered.");
-		}		
-	}
-	/**
-	 * 
-	 * @param id of the account
-	 * @return account as optional
-	 */
-	public Optional<Account> getAccount(String id){
-		return Optional.ofNullable(accounts.get(id));
-	}
-	/**
-	 * @return an immutable copy of accounts map: [id, account]
-	 */
-	public Map<String, Account> getAccountsMap(){
-		return ImmutableMap.copyOf(accounts);
 	}
 }

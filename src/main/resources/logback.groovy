@@ -37,15 +37,15 @@ if(isJUnitTest()){
 		root(INFO, ["console"])
 		*/
 	} else {
+		withJansi = true
 		appender("console", ConsoleAppender) {
 			encoder(PatternLayoutEncoder) {
-				pattern = "%date{HH:mm:ss,UTC}|%-5.5level|%-25.-25logger{0}|%-360.-360msg| %-25.-25thread |%20.20method|%caller{1}"
+				pattern = "%date{HH:mm:ss,UTC}|%highlight(%-5.5level)|%-25.-25logger{0}|%highlight(%-360.-360msg)| %-25.-25thread |%20.20method|%caller{1}"
 			}
 		}
 		logger("com.x", DEBUG, ["console"], false)
 		root(DEBUG, ["console"])
 	}
-	
 }
 
 

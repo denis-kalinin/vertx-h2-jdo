@@ -12,7 +12,11 @@ import javax.jdo.annotations.PrimaryKey;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
+/**
+ * A simple <em>a-la</em> bank account
+ * @author Kalinin_DP
+ *
+ */
 @PersistenceCapable (detachable="true")
 @FetchGroup(name="account-metainfo", members={@Persistent(name="id"), @Persistent(name="customerId")})
 public class Account implements Serializable {
@@ -27,20 +31,32 @@ public class Account implements Serializable {
 	private BigDecimal deposit = BigDecimal.ZERO;
 	
 	private Account(){}
+	/**
+	 * Creates account for a customer with an ID specified.
+	 * @param customerId customer ID
+	 */
 	public Account (String customerId){
 		this.customerId = customerId;
 	}
 
-
+	/**
+	 * @return an <code>ID/number</code> of a registered account or <code>null</code> if account is not registered
+	 */
 	public String getId() {
 		return id;
 	}
+	/**
+	 * @return amount of money on that account
+	 */
 	public BigDecimal getDeposit() {
 		return deposit;
 	}
 	public void setDeposit(BigDecimal deposit) {
 		this.deposit = deposit;
 	}
+	/**
+	 * @return ID of a customer
+	 */
 	public String getCustomerId(){
 		return customerId;
 	}
