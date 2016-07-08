@@ -69,10 +69,10 @@ task downloadRamlConsole (type: Copy) {
 		try{
 			url.withInputStream{
 				i -> f.withOutputStream{ it << i }
-				println "Downloaded!"
-				from zipTree(f)
-				into webrootDir
 			}
+			println "Downloaded!"
+			from zipTree(f)
+			into webrootDir
 		}catch(Exception e){
 			e.printStackTrace()
 		}
