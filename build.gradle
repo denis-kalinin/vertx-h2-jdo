@@ -65,11 +65,16 @@ task downloadRamlConsole (type: Copy) {
 	if ( !webrootDir.isDirectory() ){
 		println "Downloading raml-console patched release from GitHub..."
 		File f = new File (buildDir, 'raml-console.zip')
-		new URL('https://github.com/denis-kalinin/api-console/releases/download/v3.0.2.294/raml-console_3.0.2.294.zip').withInputStream{
-			i -> f.withOutputStream{ it << i }
-			println "Downloaded!"
-			from zipTree(f)
-			into webrootDir
+		URL url = new URL('https://github.com/denis-kalinin/api-console/releases/download/v3.0.2.294/raml-console_3.0.2.294.zip');
+		try{
+			url.withInputStream{
+				i -> f.withOutputStream{ it << i }
+				println "Downloaded!"
+				from zipTree(f)
+				into webrootDir
+			}
+		}catch(Exception e){
+			e.printStackTrace()
 		}
 	}
 }
