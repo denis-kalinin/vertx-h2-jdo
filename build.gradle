@@ -59,22 +59,22 @@ mainClassName = "io.vertx.core.Launcher"
 run {
     args = ["run", mainVerticle]
 }
-
 task downloadRamlConsole (type: Copy) {
-	def webrootDir = new File(projectDir, '/src/main/resources/META-INF/webroot')
+	def webrootDir = file('src/main/resources/META-INF/webroot')
+	println webrootDir
 	if ( !webrootDir.isDirectory() ){
 		println "Downloading raml-console patched release from GitHub..."
-		File f = new File (buildDir, 'raml-console.zip')
-		URL url = new URL('https://github.com/denis-kalinin/api-console/releases/download/v3.0.2.294/raml-console_3.0.2.294.zip');
 		try{
-			url.withInputStream{
-				i -> f.withOutputStream{ it << i }
-			}
+			def ramlConsoleZip = new File (buildDir, 'raml-console.zip')
+			def fileOutputStream = new File (buildDir, 'raml-console.zip').newOutputStream()
+			fileOutputStream << new URL('https://github.com/denis-kalinin/api-console/releases/download/v3.0.2.294/raml-console_3.0.2.294.zip').openStream()
+			fileOutputStream.close()  
 			println "Downloaded!"
-			from zipTree(f)
+			from zipTree(ramlConsoleZip)
 			into webrootDir
 		}catch(Exception e){
 			e.printStackTrace()
+			throw new GradleException(e.getMessage())
 		}
 	}
 }
