@@ -5,7 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import com.x.models.Transfer;
-
+/**
+ * Transfers DAO
+ * @author Kalinin_DP
+ *
+ */
 public interface TransferDAO {
 	/**
 	 * Gets a list of transfers for an account

@@ -23,7 +23,7 @@ if(isJUnitTest()){
 			pattern = "%date{HH:mm:ss,UTC}|%-5.5level|%-25.-25logger{0}|%-360.-360msg| %-25.-25thread |%20.20method|%caller{1}"
 		}
 	}
-	logger("com.x", TRACE, ["console"], false)
+	logger("com.x", INFO, ["console"], false)
 	root(INFO, ["console"])
 }else{
 	Optional<File> jarOptFile = com.x.util.JarUtils.thisJarFile;

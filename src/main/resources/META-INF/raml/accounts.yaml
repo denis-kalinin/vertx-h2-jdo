@@ -8,9 +8,7 @@ documentation:
   - title: Getting started
     content: !include getstarted.md
   - title: Using API
-    content: |
-      How to use it
-      and when
+    content: !include useapi.md
 
 /accounts:
   displayName: accounts

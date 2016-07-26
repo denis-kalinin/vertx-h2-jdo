@@ -29,9 +29,15 @@ import com.x.dao.TransferDAOImpl;
 import com.x.models.Account;
 import com.x.models.Balance;
 import com.x.models.Transfer;
+import com.x.routers.ApiRouter;
+import com.x.routers.RouterFactory;
 
 import io.vertx.core.eventbus.MessageCodec;
-
+/**
+ * Guice module for DI
+ * @author Kalinin_DP
+ *
+ */
 public class AccountModule extends AbstractModule {
 	
 	private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(AccountModule.class);
@@ -39,6 +45,7 @@ public class AccountModule extends AbstractModule {
 	@Override
 	protected void configure() {
 		bind(AccountDAO.class).to(AccountDAOImpl.class);
+		bind(RouterFactory.class).to(ApiRouter.class);
 		bind(TransferDAO.class).to(TransferDAOImpl.class);
 		bind(new TypeLiteral<MessageCodec<Account, Account>>(){}).to(AccountMessageCodec.class);
 		bind(new TypeLiteral<MessageCodec<Transfer, Transfer>>(){}).to(TransferMessageCodec.class);

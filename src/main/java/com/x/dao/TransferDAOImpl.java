@@ -14,7 +14,6 @@ import javax.jdo.Query;
 import javax.jdo.Transaction;
 
 import com.x.models.Account;
-import com.x.models.ServiceMessage;
 import com.x.models.Transfer;
 
 @Singleton

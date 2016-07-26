@@ -23,7 +23,7 @@ public class Launcher {
 		if(args.length > 0){
 			io.vertx.core.Launcher.main(args);
 		}else{
-			io.vertx.core.Launcher.main(new String[]{"run", com.x.services.MainVerticle.class.getName()});
+			io.vertx.core.Launcher.main(new String[]{"run", com.x.verticles.MainVerticle.class.getName()});
 		}
 	}
 	/**
