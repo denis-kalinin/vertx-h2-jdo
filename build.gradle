@@ -54,7 +54,7 @@ dependencies {
     testCompile 'org.jboss.resteasy:resteasy-jackson2-provider:3.0.17.Final'
 }
 
-def mainVerticle = "com.x.services.MainVerticle"
+def mainVerticle = "com.x.verticles.MainVerticle"
 mainClassName = "io.vertx.core.Launcher"
 run {
     args = ["run", mainVerticle]

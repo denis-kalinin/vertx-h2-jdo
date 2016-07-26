@@ -32,7 +32,7 @@ Some assumptions was made in the project to facilitate development
 
 1. RESTful API supports `application/json` only&mdash;`application/xml` was discarded for simplicity.
 2. API doesn't support security
-3. If `Transfer` is made without field `from` then it is considered as incoming transaction from another system and that system is responsible for balancing debit/credit
+3. If `Transfer` sent without field `from` then it is considered as incoming transaction from another system and that system is responsible for balancing debit/credit
 4. An account may have **negative balance**&mdash;there is no policy.
 5. **Direct debit** is allowed, i.e. _negative amount_ in a transfer is valid: `{"from": 12, "to": 1, "amount": -45.42}`
 
